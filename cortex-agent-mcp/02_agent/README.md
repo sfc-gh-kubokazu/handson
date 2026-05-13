@@ -17,6 +17,20 @@
 
 ---
 
+## 📚 補足: Snowflake Intelligence とは？
+
+![Snowflake Intelligence Overview](../assets/screenshots/02_agent/00_snowflake_intelligence_overview.png)
+
+ダッシュボードの迷路から、**会話型インテリジェンス**へ。自然言語でSnowflake上のデータに直接問いかけられる体験です。
+
+### Snowflake Intelligence の仕組み
+
+![SI Architecture](../assets/screenshots/02_agent/00_si_arch.png)
+
+Snowflake Intelligence は **Cortex Agent API** を介して、**Cortex Analyst（構造化データ）** と **Cortex Search（非構造化データ）** をオーケストレーションし、Horizon のガバナンスのもとデータにアクセスします。本ハンズオンではこのコアである **Cortex Agent** を自作します。
+
+---
+
 ## Step 1: CoCo Web UI を開く（5分）
 
 ### 手順
