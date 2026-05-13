@@ -1,21 +1,20 @@
 {
-  "_comment": "Snowflake MCP server config template. Copy to your Kiro/Claude Desktop config file and replace placeholders.",
+  "_comment": "Snowflake-managed MCP Server (OAuth) config template. Copy to your Kiro/Claude Desktop config and replace placeholders.",
+  "_notes": [
+    "Replace <account_url> with your Snowflake account URL (use hyphens, not underscores).",
+    "Get OAUTH_CLIENT_ID and OAUTH_CLIENT_SECRET from SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('TOAI_MCP_OAUTH').",
+    "OAUTH_REDIRECT_URI in CREATE SECURITY INTEGRATION must match the client callback URL."
+  ],
   "mcpServers": {
-    "snowflake": {
-      "command": "uvx",
-      "args": [
-        "--from",
-        "git+https://github.com/Snowflake-Labs/mcp",
-        "mcp-server-snowflake",
-        "--service-config-file",
-        "/absolute/path/to/service_config.yaml"
-      ],
-      "env": {
-        "SNOWFLAKE_ACCOUNT": "<orgname>-<accountname>",
-        "SNOWFLAKE_USER": "<your_user>",
-        "SNOWFLAKE_PAT": "<your_pat>",
-        "SNOWFLAKE_ROLE": "R_HANDSON",
-        "SNOWFLAKE_WAREHOUSE": "WH_HANDSON"
+    "snowflake-toai": {
+      "url": "https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/TOAI_MCP_SERVER",
+      "auth": {
+        "type": "oauth2",
+        "client_id": "<OAUTH_CLIENT_ID>",
+        "client_secret": "<OAUTH_CLIENT_SECRET>",
+        "authorization_url": "https://<account_url>/oauth/authorize",
+        "token_url": "https://<account_url>/oauth/token-request",
+        "scope": "session:role:R_HANDSON"
       }
     }
   }

@@ -1,0 +1,32 @@
+# Snowflake-managed MCP Server - Spec Template
+#
+# Use this YAML inside CREATE MCP SERVER ... FROM SPECIFICATION $$ ... $$;
+# Tool types supported:
+#   - CORTEX_AGENT_RUN          : Cortex Agent
+#   - CORTEX_ANALYST_MESSAGE    : Cortex Analyst (semantic view)
+#   - CORTEX_SEARCH_SERVICE_QUERY : Cortex Search
+#   - SYSTEM_EXECUTE_SQL        : SQL execution
+#   - GENERIC                   : UDF / Stored Procedure
+
+tools:
+  - name: "toai-braze-agent"
+    type: "CORTEX_AGENT_RUN"
+    identifier: "HANDSON_CORTEX_AGENT.BRAZE.TOAI_BRAZE_AGENT"
+    description: "Brazeのメールキャンペーン分析エージェント。送信/開封/クリック/CV/収益を自然言語で分析"
+    title: "TOAI Braze Agent"
+
+  - name: "braze-campaign-analyst"
+    type: "CORTEX_ANALYST_MESSAGE"
+    identifier: "HANDSON_CORTEX_AGENT.BRAZE.SEMANTIC_VIEW_BRAZE_CAMPAIGN"
+    description: "Brazeメールキャンペーンのセマンティックビュー（直接Analyst呼び出し用）"
+    title: "Braze Campaign Analyst"
+
+  # Optional: SQL execution tool (read-only推奨)
+  # - name: "sql-readonly"
+  #   type: "SYSTEM_EXECUTE_SQL"
+  #   description: "Read-only SQL execution"
+  #   title: "Read-only SQL"
+  #   config:
+  #     read_only: true
+  #     query_timeout: 60
+  #     warehouse: "WH_HANDSON"
