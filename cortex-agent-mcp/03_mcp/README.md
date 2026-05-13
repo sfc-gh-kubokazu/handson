@@ -22,6 +22,28 @@
 
 ## Step 1: 仕組みの整理（5分）
 
+### Model Context Protocol (MCP) とは？
+
+![MCP Overview](../assets/screenshots/03_mcp/01_mcp_overview.png)
+
+MCP は、AIアプリ（**MCP Host / Client**）と外部ツール・データソース（**MCP Server**）の間の通信を標準化するオープンプロトコル。Kiro / Claude Desktop / Cursor 等のIDEはすべて MCP Client として動作します。
+
+### Snowflake-managed MCP Server のメリット
+
+![Snowflake Managed MCP Benefits](../assets/screenshots/03_mcp/02_snowflake_managed_mcp_benefits.png)
+
+- **相互運用性** — どのMCP Clientからでも接続可能
+- **標準化されたインターフェース** — 統一されたツール公開
+- **ガバナンス** — Snowflake RBAC・ネットワークポリシーがそのまま適用
+
+### 公開できるツール
+
+![Snowflake Managed MCP Tools](../assets/screenshots/03_mcp/03_snowflake_managed_mcp_tools.png)
+
+Cortex Agents / Cortex Search / Cortex Analyst / SQL 実行 / カスタムUDF をMCPツールとしてClient側に公開できます。
+
+---
+
 ### Snowflake-managed MCP Server とは
 - **Snowflakeが提供するマネージドMCPサーバ**（2025年11月GA）
 - ローカルにMCPサーバを立ち上げる必要なし → **インフラ不要**

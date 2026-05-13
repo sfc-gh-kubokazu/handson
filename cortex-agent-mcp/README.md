@@ -38,6 +38,26 @@ Snowflakeの **AI開発エージェント = Cortex Code (CoCo)** を活用しま
 
 ---
 
+---
+
+## 🧠 Snowflake Intelligence とは？
+
+![Snowflake Intelligence Overview](./assets/screenshots/00_intro/03_snowflake_intelligence_overview.png)
+
+ダッシュボードの迷路から、**会話型インテリジェンス**へ。自然言語でSnowflake上のデータに直接問いかけられる体験です。
+
+### Snowflake の生成AIスタック
+
+![AI Stack](./assets/screenshots/00_intro/04_ai_stack.png)
+
+### Snowflake Intelligence の仕組み
+
+![SI Architecture](./assets/screenshots/00_intro/05_si_architecture.png)
+
+Snowflake Intelligence は **Cortex Agent API** を介して、**Cortex Analyst（構造化データ）** と **Cortex Search（非構造化データ）** をオーケストレーションし、Horizon のガバナンスのもとデータにアクセスします。本ハンズオンではこの仕組みのコアである **Cortex Agent** を自作し、外部IDEから MCP 経由で呼び出します。
+
+---
+
 ## 想定所要時間
 **約2時間**
 
@@ -66,6 +86,7 @@ Snowflakeの **AI開発エージェント = Cortex Code (CoCo)** を活用しま
 | 2 | [`02_agent/`](./02_agent/) | セマンティックビュー作成 → Cortex Agent作成 |
 | 3 | [`03_mcp/`](./03_mcp/) | Kiro / Claude Desktop に Snowflake MCP設定 |
 | 4 | [`04_advanced/`](./04_advanced/) | 発展課題（実データへの置換・他Agent統合等） |
+| Appendix | [`appendix_search/`](./appendix_search/) | Cortex Search 概要（本編対象外・補足） |
 
 ## 使用データ
 
