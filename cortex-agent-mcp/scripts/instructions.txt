@@ -93,6 +93,10 @@ Cortex Agent を作成してください。
 【Agent名】 BRAZE_AGENT
 【DB.Schema】 HANDSON_CORTEX_AGENT.BRAZE
 【ツール】 Cortex Analyst（上記セマンティックビューを参照）
+【tool_resources】
+- Analyst の execution_environment に warehouse: WH_HANDSON を必ず指定
+  （これが無いと "Analyst tool is missing an execution environment" エラーになります）
+- semantic_view: HANDSON_CORTEX_AGENT.BRAZE.SEMANTIC_VIEW_BRAZE_CAMPAIGN
 【動作】
 - 日本語の質問にも英語で同様の意味を理解して回答
 - データに基づく回答のみ。推測しない
