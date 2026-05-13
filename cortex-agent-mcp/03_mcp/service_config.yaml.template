@@ -1,0 +1,23 @@
+# Snowflake MCP Server - Service Config Template
+# Copy this file and update paths/names for your environment.
+
+agent_services:
+  - service_name: toai_braze_agent
+    description: "Brazeメールキャンペーン分析エージェント。送信/開封/クリック/CV/収益を自然言語で分析"
+    database_name: HANDSON_CORTEX_AGENT
+    schema_name: BRAZE
+    agent_name: TOAI_BRAZE_AGENT
+
+# （任意）Cortex Analyst を直接公開する場合
+# analyst_services:
+#   - service_name: braze_campaign_analyst
+#     semantic_view: HANDSON_CORTEX_AGENT.BRAZE.SEMANTIC_VIEW_BRAZE_CAMPAIGN
+#     description: "Braze メールキャンペーンのセマンティックモデル"
+
+# （任意）Cortex Search を直接公開する場合
+# search_services:
+#   - service_name: docs_search
+#     database_name: HANDSON_CORTEX_AGENT
+#     schema_name: DOCS
+#     service_name_in_snowflake: DOCS_SEARCH_SVC
+#     description: "社内ドキュメント検索"

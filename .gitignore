@@ -1,0 +1,27 @@
+# Files larger than 100MB
+*.pkl
+*.parquet
+*.csv
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Secrets
+.env
+*.pat
+*credentials*
+**/secrets/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/

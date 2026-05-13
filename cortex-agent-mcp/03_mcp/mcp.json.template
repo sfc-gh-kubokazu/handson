@@ -1,0 +1,22 @@
+{
+  "_comment": "Snowflake MCP server config template. Copy to your Kiro/Claude Desktop config file and replace placeholders.",
+  "mcpServers": {
+    "snowflake": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Snowflake-Labs/mcp",
+        "mcp-server-snowflake",
+        "--service-config-file",
+        "/absolute/path/to/service_config.yaml"
+      ],
+      "env": {
+        "SNOWFLAKE_ACCOUNT": "<orgname>-<accountname>",
+        "SNOWFLAKE_USER": "<your_user>",
+        "SNOWFLAKE_PAT": "<your_pat>",
+        "SNOWFLAKE_ROLE": "R_HANDSON",
+        "SNOWFLAKE_WAREHOUSE": "WH_HANDSON"
+      }
+    }
+  }
+}
