@@ -201,14 +201,6 @@ SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('BRAZE_MCP_OAUTH');
 
 
 -- =============================================================================
--- [片付け] ハンズオン後にクリーンアップする場合（任意）
+-- [片付け]
+-- ハンズオン後のクリーンアップは scripts/cleanup.sql を実行してください。
 -- =============================================================================
--- USE ROLE ACCOUNTADMIN;
--- DROP SECURITY INTEGRATION IF EXISTS BRAZE_MCP_OAUTH;
--- DROP MCP SERVER          IF EXISTS HANDSON_CORTEX_AGENT.BRAZE.BRAZE_MCP_SERVER;
--- DROP AGENT               IF EXISTS HANDSON_CORTEX_AGENT.BRAZE.BRAZE_AGENT;
--- DROP SEMANTIC VIEW       IF EXISTS HANDSON_CORTEX_AGENT.BRAZE.SEMANTIC_VIEW_BRAZE_CAMPAIGN;
--- DROP DATABASE            IF EXISTS HANDSON_CORTEX_AGENT;
--- DROP DATABASE            IF EXISTS BRAZE_USER_EVENT_DEMO_DATASET;
--- DROP WAREHOUSE           IF EXISTS WH_HANDSON;
--- DROP ROLE                IF EXISTS R_HANDSON;
