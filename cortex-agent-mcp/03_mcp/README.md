@@ -2,7 +2,7 @@
 
 このステップでは、**Snowflake-managed MCP Server**（GA済み）を作成し、
 **OAuth認証**で外部IDE（Kiro / Claude Desktop / Cursor等）から
-ハンズオン2で作成した `TOAI_BRAZE_AGENT` を直接呼び出せるようにします。
+ハンズオン2で作成した `BRAZE_AGENT` を直接呼び出せるようにします。
 
 ## 所要時間
 **約35分**
@@ -39,7 +39,7 @@
                                                                      │ RBAC
                                                                      ▼
                                                        ┌────────────────────────┐
-                                                       │ TOAI_BRAZE_AGENT       │
+                                                       │ BRAZE_AGENT       │
                                                        │ (Cortex Agent)         │
                                                        └────────────────────────┘
 ```
@@ -74,7 +74,7 @@ GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE R_HANDSON;
 -- Agent利用権限
 GRANT USAGE ON DATABASE HANDSON_CORTEX_AGENT TO ROLE R_HANDSON;
 GRANT USAGE ON SCHEMA HANDSON_CORTEX_AGENT.BRAZE TO ROLE R_HANDSON;
-GRANT USAGE ON AGENT HANDSON_CORTEX_AGENT.BRAZE.TOAI_BRAZE_AGENT TO ROLE R_HANDSON;
+GRANT USAGE ON AGENT HANDSON_CORTEX_AGENT.BRAZE.BRAZE_AGENT TO ROLE R_HANDSON;
 
 -- Semantic View（Cortex Analyst利用）
 GRANT SELECT ON SEMANTIC VIEW HANDSON_CORTEX_AGENT.BRAZE.SEMANTIC_VIEW_BRAZE_CAMPAIGN TO ROLE R_HANDSON;
@@ -87,14 +87,14 @@ USE ROLE SYSADMIN;
 USE DATABASE HANDSON_CORTEX_AGENT;
 USE SCHEMA BRAZE;
 
-CREATE OR REPLACE MCP SERVER TOAI_MCP_SERVER
+CREATE OR REPLACE MCP SERVER BRAZE_MCP_SERVER
   FROM SPECIFICATION $$
 tools:
-  - name: "toai-braze-agent"
+  - name: "braze-agent"
     type: "CORTEX_AGENT_RUN"
-    identifier: "HANDSON_CORTEX_AGENT.BRAZE.TOAI_BRAZE_AGENT"
+    identifier: "HANDSON_CORTEX_AGENT.BRAZE.BRAZE_AGENT"
     description: "Brazeのメールキャンペーン分析エージェント。送信/開封/クリック/CV/収益を自然言語で分析できる。"
-    title: "TOAI Braze Agent"
+    title: "Braze Agent"
 
   - name: "braze-campaign-analyst"
     type: "CORTEX_ANALYST_MESSAGE"
@@ -105,7 +105,7 @@ $$;
 
 -- 確認
 SHOW MCP SERVERS IN SCHEMA HANDSON_CORTEX_AGENT.BRAZE;
-DESC MCP SERVER TOAI_MCP_SERVER;
+DESC MCP SERVER BRAZE_MCP_SERVER;
 ```
 
 ### 2-3. MCP Server へのアクセス権限付与
@@ -114,7 +114,7 @@ DESC MCP SERVER TOAI_MCP_SERVER;
 USE ROLE SECURITYADMIN;
 
 -- 接続権限とツール検出
-GRANT USAGE ON MCP SERVER HANDSON_CORTEX_AGENT.BRAZE.TOAI_MCP_SERVER TO ROLE R_HANDSON;
+GRANT USAGE ON MCP SERVER HANDSON_CORTEX_AGENT.BRAZE.BRAZE_MCP_SERVER TO ROLE R_HANDSON;
 ```
 
 ---
@@ -134,7 +134,7 @@ Kiro側のOAuth Callback URL を確認します。
 ```sql
 USE ROLE ACCOUNTADMIN;
 
-CREATE OR REPLACE SECURITY INTEGRATION TOAI_MCP_OAUTH
+CREATE OR REPLACE SECURITY INTEGRATION BRAZE_MCP_OAUTH
   TYPE = OAUTH
   OAUTH_CLIENT = CUSTOM
   ENABLED = TRUE
@@ -145,7 +145,7 @@ CREATE OR REPLACE SECURITY INTEGRATION TOAI_MCP_OAUTH
   OAUTH_USE_SECONDARY_ROLES = NONE;
 
 -- OAuthクライアントID と クライアントシークレットを取得
-SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('TOAI_MCP_OAUTH');
+SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('BRAZE_MCP_OAUTH');
 ```
 
 > 💡 `SYSTEM$SHOW_OAUTH_CLIENT_SECRETS` の引数は **大文字** で渡すこと。
@@ -164,7 +164,7 @@ KiroのMCP設定画面で「Add MCP Server (Streamable HTTP / OAuth)」を選択
 
 | 項目 | 値 |
 |---|---|
-| Server URL | `https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/TOAI_MCP_SERVER` |
+| Server URL | `https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/BRAZE_MCP_SERVER` |
 | Auth Type | OAuth 2.0 |
 | Client ID | Step 3-2で取得した OAUTH_CLIENT_ID |
 | Client Secret | Step 3-2で取得した OAUTH_CLIENT_SECRET |
@@ -181,8 +181,8 @@ KiroのMCP設定画面で「Add MCP Server (Streamable HTTP / OAuth)」を選択
 ```json
 {
   "mcpServers": {
-    "snowflake-toai": {
-      "url": "https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/TOAI_MCP_SERVER",
+    "snowflake-braze": {
+      "url": "https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/BRAZE_MCP_SERVER",
       "auth": {
         "type": "oauth2",
         "client_id": "<OAUTH_CLIENT_ID>",
@@ -200,7 +200,7 @@ KiroのMCP設定画面で「Add MCP Server (Streamable HTTP / OAuth)」を選択
 
 1. Kiroで保存
 2. Kiro再起動
-3. ツール一覧に `toai-braze-agent` が表示されたらクリックで初回認証フロー開始
+3. ツール一覧に `braze-agent` が表示されたらクリックで初回認証フロー開始
 4. ブラウザでSnowflakeログイン → Consent画面で **Allow**
 5. Kiroに戻ると認証完了 → ツール利用可能
 
@@ -211,15 +211,15 @@ KiroのMCP設定画面で「Add MCP Server (Streamable HTTP / OAuth)」を選択
 ### サンプル質問集
 
 ```
-@snowflake-toai TOAI_BRAZE_AGENT で「直近のメール開封率トップ10キャンペーンは？」
+@snowflake-braze BRAZE_AGENT で「直近のメール開封率トップ10キャンペーンは？」
 ```
 
 ```
-@snowflake-toai 「国別のクリック率を比較して」
+@snowflake-braze 「国別のクリック率を比較して」
 ```
 
 ```
-@snowflake-toai 「月次のCV件数推移を教えて」
+@snowflake-braze 「月次のCV件数推移を教えて」
 ```
 
 → Kiroが MCP 経由で Cortex Agent を呼び出し、結果を返してくれればOK。
@@ -261,10 +261,10 @@ OAuthではなくPATで動作確認したい場合は、以下手順で代替可
 
 ✅ ここまでで以下が完了していればOKです：
 
-- [ ] `MCP SERVER TOAI_MCP_SERVER` が作成済み
+- [ ] `MCP SERVER BRAZE_MCP_SERVER` が作成済み
 - [ ] OAuth Security Integration が有効
 - [ ] Kiroに OAuth 経由で MCP サーバが認識されている
-- [ ] Kiroチャットから `TOAI_BRAZE_AGENT` を呼び出して回答が返る
+- [ ] Kiroチャットから `BRAZE_AGENT` を呼び出して回答が返る
 
 → 余裕があれば **[04_advanced](../04_advanced/README.md)** で発展課題に挑戦してください。
 

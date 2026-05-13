@@ -38,7 +38,7 @@ EMAIL_OPEN, EMAIL_CLICK, CAMPAIGN_CONVERSION, CAMPAIGN_REVENUE）から、
 
 ```
 SEMANTIC_VIEW_BRAZE_CAMPAIGN を使った Cortex Agent
-TOAI_BRAZE_AGENT を作成してください。
+BRAZE_AGENT を作成してください。
 
 - DB.Schema: HANDSON_CORTEX_AGENT.BRAZE
 - ツール: Cortex Analyst（上記セマンティックビュー）
@@ -101,7 +101,7 @@ TOAI_BRAZE_AGENT を作成してください。
 ```
 
 ```
-TOAI_BRAZE_AGENT の現在の定義を表示して
+BRAZE_AGENT の現在の定義を表示して
 ```
 
 ```
@@ -113,7 +113,7 @@ TOAI_BRAZE_AGENT の現在の定義を表示して
 ## 🔁 発展（応用）
 
 ```
-TOAI_BRAZE_AGENT に Cortex Search Service DOCS_SEARCH_SVC を追加して、
+BRAZE_AGENT に Cortex Search Service DOCS_SEARCH_SVC を追加して、
 ドキュメント検索もできるようにアップデートして
 ```
 
@@ -123,6 +123,6 @@ Streamlit アプリのコードを書いて
 ```
 
 ```
-TOAI_BRAZE_AGENT にユーザーセグメント別（カスタム属性活用）の
+BRAZE_AGENT にユーザーセグメント別（カスタム属性活用）の
 クリック率分析メトリクスを追加して
 ```

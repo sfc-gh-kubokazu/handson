@@ -9,11 +9,11 @@
 #   - GENERIC                   : UDF / Stored Procedure
 
 tools:
-  - name: "toai-braze-agent"
+  - name: "braze-agent"
     type: "CORTEX_AGENT_RUN"
-    identifier: "HANDSON_CORTEX_AGENT.BRAZE.TOAI_BRAZE_AGENT"
+    identifier: "HANDSON_CORTEX_AGENT.BRAZE.BRAZE_AGENT"
     description: "Brazeのメールキャンペーン分析エージェント。送信/開封/クリック/CV/収益を自然言語で分析"
-    title: "TOAI Braze Agent"
+    title: "Braze Agent"
 
   - name: "braze-campaign-analyst"
     type: "CORTEX_ANALYST_MESSAGE"

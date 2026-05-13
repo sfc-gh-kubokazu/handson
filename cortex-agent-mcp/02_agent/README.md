@@ -9,7 +9,7 @@
 ## ゴール
 - CoCo Web UI で自然言語ベースの開発体験を理解
 - Brazeマートに対するセマンティックビューが作成済み
-- Cortex Agent (`TOAI_BRAZE_AGENT`) が動作する状態
+- Cortex Agent (`BRAZE_AGENT`) が動作する状態
 - Snowflake Intelligence から Agent に質問して回答を得られる
 
 ## 前提
@@ -116,7 +116,7 @@ LIMIT 10;
 作成した SEMANTIC_VIEW_BRAZE_CAMPAIGN を使って、
 Cortex Agent を作成してください。
 
-【Agent名】 TOAI_BRAZE_AGENT
+【Agent名】 BRAZE_AGENT
 【DB.Schema】 HANDSON_CORTEX_AGENT.BRAZE
 【ツール】 Cortex Analyst（上記セマンティックビューを参照）
 【動作】
@@ -137,7 +137,7 @@ Cortex Agent を作成してください。
 
 ```sql
 SHOW AGENTS IN SCHEMA HANDSON_CORTEX_AGENT.BRAZE;
-DESC AGENT HANDSON_CORTEX_AGENT.BRAZE.TOAI_BRAZE_AGENT;
+DESC AGENT HANDSON_CORTEX_AGENT.BRAZE.BRAZE_AGENT;
 ```
 
 ---
@@ -146,7 +146,7 @@ DESC AGENT HANDSON_CORTEX_AGENT.BRAZE.TOAI_BRAZE_AGENT;
 
 ### 手順
 1. Snowsight → **AI & ML** → **Snowflake Intelligence**
-2. 上部のAgent選択ドロップダウンから `TOAI_BRAZE_AGENT` を選択
+2. 上部のAgent選択ドロップダウンから `BRAZE_AGENT` を選択
 3. チャット欄から以下のような質問を投げる:
 
 #### サンプル質問集
@@ -190,7 +190,7 @@ DESC AGENT HANDSON_CORTEX_AGENT.BRAZE.TOAI_BRAZE_AGENT;
 
 - [ ] CoCo Web UI が動作することを確認
 - [ ] `SEMANTIC_VIEW_BRAZE_CAMPAIGN` が作成済み
-- [ ] `TOAI_BRAZE_AGENT` が作成済み
+- [ ] `BRAZE_AGENT` が作成済み
 - [ ] Snowflake Intelligence から自然言語で質問→回答を確認
 
 → 続いて **[03_mcp](../03_mcp/README.md)** で外部IDE（Kiro/Claude Desktop）からこのAgentを呼び出します。
