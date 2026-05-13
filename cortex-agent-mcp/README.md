@@ -46,13 +46,13 @@ Snowflakeの **AI開発エージェント = Cortex Code (CoCo)** を活用しま
 
 ダッシュボードの迷路から、**会話型インテリジェンス**へ。自然言語でSnowflake上のデータに直接問いかけられる体験です。
 
-### Snowflake の生成AIスタック
-
-![AI Stack](./assets/screenshots/00_intro/04_ai_stack.png)
-
 ### Snowflake Intelligence の仕組み
 
-![SI Architecture](./assets/screenshots/00_intro/05_si_architecture.png)
+![SI Architecture](./assets/screenshots/00_intro/04_si_arch.png)
+
+### Snowflake の生成AI機能スタック
+
+![AI Stack](./assets/screenshots/00_intro/05_si_architecture.png)
 
 Snowflake Intelligence は **Cortex Agent API** を介して、**Cortex Analyst（構造化データ）** と **Cortex Search（非構造化データ）** をオーケストレーションし、Horizon のガバナンスのもとデータにアクセスします。本ハンズオンではこの仕組みのコアである **Cortex Agent** を自作し、外部IDEから MCP 経由で呼び出します。
 
