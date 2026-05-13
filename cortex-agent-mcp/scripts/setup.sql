@@ -181,25 +181,26 @@ GRANT USAGE ON MCP SERVER HANDSON_CORTEX_AGENT.BRAZE.BRAZE_MCP_SERVER TO ROLE R_
 
 -- =============================================================================
 -- [03_mcp] Step 3: PAT (Programmatic Access Token) 発行
+-- 推奨: Snowsight GUI から発行（Settings → Authentication →
+--       Programmatic Access Tokens → Generate new token）
+--       詳細手順とスクショ: 03_mcp/README.md Step 3
+--
+-- 以下は SQL で発行したい場合の任意手順です。
 -- Kiro / Cursor / Claude Desktop など mcp-remote 系クライアントは
 -- Dynamic Client Registration (RFC 7591) を要求するが、Snowflake は未対応のため
 -- PAT を Bearer として渡す方式が現状の現実解（公式 KB 推奨）。
 -- =============================================================================
-USE ROLE ACCOUNTADMIN;
-
--- 既に R_HANDSON は 01_setup で作成済み・必要権限付与済みの想定
--- PAT は USER に紐付けて発行する。Role制限を R_HANDSON に固定。
--- <参加者ユーザー名> は実ユーザー名に置換してください。
-
-ALTER USER IF EXISTS <参加者ユーザー名>
-  ADD PROGRAMMATIC ACCESS TOKEN pat_handson_mcp
-    ROLE_RESTRICTION = 'R_HANDSON'
-    DAYS_TO_EXPIRY = 7
-    COMMENT = 'Cortex Agent x MCP handson';
--- ★ 結果に表示される token_secret は二度と表示されません。必ず控えてください。
-
--- 任意: 発行済みPATの一覧確認
-SHOW USER PROGRAMMATIC ACCESS TOKENS FOR USER <参加者ユーザー名>;
+-- USE ROLE ACCOUNTADMIN;
+--
+-- ALTER USER IF EXISTS <参加者ユーザー名>
+--   ADD PROGRAMMATIC ACCESS TOKEN pat_handson_mcp
+--     ROLE_RESTRICTION = 'R_HANDSON'
+--     DAYS_TO_EXPIRY = 15
+--     COMMENT = 'Cortex Agent x MCP handson';
+-- -- ★ 結果に表示される token_secret は二度と表示されません。必ず控えてください。
+--
+-- -- 任意: 発行済みPATの一覧確認
+-- SHOW USER PROGRAMMATIC ACCESS TOKENS FOR USER <参加者ユーザー名>;
 
 
 -- =============================================================================

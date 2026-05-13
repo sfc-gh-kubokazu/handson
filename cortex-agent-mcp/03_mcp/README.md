@@ -143,7 +143,30 @@ GRANT USAGE ON MCP SERVER HANDSON_CORTEX_AGENT.BRAZE.BRAZE_MCP_SERVER TO ROLE R_
 
 ## Step 3: PAT 発行（5分）
 
-### 3-1. PAT を発行（SQL）
+Snowsight の GUI から発行します。
+
+### 3-1. Snowsight で PAT を発行
+
+1. Snowsight 右上のユーザーメニュー → **Settings**
+2. 左サイドメニュー → **Authentication**
+3. **Programmatic Access Tokens** セクション → **+ Generate new token**
+4. 以下の通り入力:
+
+   ![PAT 作成ダイアログ](../assets/screenshots/03_mcp/04_pat_create_dialog.png)
+
+   | 項目 | 値 |
+   |---|---|
+   | 名前 | `pat_handson_mcp` |
+   | コメント（オプション） | `Cortex Agent x MCP handson` |
+   | 期限切れまで | `15日`（推奨。短くしたい場合は適宜変更） |
+   | アクセスを付与 | **単一ロール（推奨）** → `R_HANDSON` |
+
+5. **生成** をクリック → 表示された **token_secret を必ずコピーして安全な場所に保管**
+   - ⚠️ **再表示不可**。コピーし忘れたら再発行（ROTATE）が必要
+
+### 3-2. （任意）SQL で発行する場合
+
+GUI ではなく SQL で発行したい場合は以下:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -151,19 +174,9 @@ USE ROLE ACCOUNTADMIN;
 ALTER USER IF EXISTS <参加者ユーザー名>
   ADD PROGRAMMATIC ACCESS TOKEN pat_handson_mcp
     ROLE_RESTRICTION = 'R_HANDSON'
-    DAYS_TO_EXPIRY = 7
+    DAYS_TO_EXPIRY = 15
     COMMENT = 'Cortex Agent x MCP handson';
 ```
-
-> ⚠️ コマンド出力に表示される `token_secret` は **二度と表示されません**。必ずコピーして安全な場所に保管してください。
-> 万一控え忘れた場合は `ALTER USER ... ROTATE PROGRAMMATIC ACCESS TOKEN pat_handson_mcp` で再発行できます。
-
-### 3-2. （任意）Snowsight UI からの発行
-
-CLI ではなく Snowsight でも発行できます:
-1. Snowsight 右上のユーザーメニュー → **Settings**
-2. **Authentication** → **Programmatic Access Tokens**
-3. **+ Generate new token** → Name: `pat_handson_mcp` / Role restriction: `R_HANDSON` / Expiration: 7日
 
 ---
 
