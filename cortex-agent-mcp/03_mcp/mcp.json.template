@@ -6,11 +6,12 @@
     "OAuth fails on these clients because Snowflake-managed MCP server does not expose RFC 7591 Dynamic Client Registration.",
     "Reference: https://community.snowflake.com/s/article/resolving-mcp-server-authentication-errors-cursor-claude",
     "Replace <account_url> with your Snowflake account URL (use hyphens, not underscores).",
-    "Replace <YOUR_PAT> with the token_secret returned by ALTER USER ... ADD PROGRAMMATIC ACCESS TOKEN."
+    "Replace <YOUR_PAT> with the token_secret returned by ALTER USER ... ADD PROGRAMMATIC ACCESS TOKEN.",
+    "?role=R_HANDSON is REQUIRED when the user's DEFAULT_ROLE differs from the role granted on the agent."
   ],
   "mcpServers": {
     "snowflake-braze": {
-      "url": "https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/BRAZE_MCP_SERVER",
+      "url": "https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/BRAZE_MCP_SERVER?role=R_HANDSON",
       "headers": {
         "Authorization": "Bearer <YOUR_PAT>"
       },
