@@ -180,26 +180,44 @@ GRANT USAGE ON MCP SERVER HANDSON_CORTEX_AGENT.BRAZE.BRAZE_MCP_SERVER TO ROLE R_
 
 
 -- =============================================================================
--- [03_mcp] Step 3: OAuth Security Integration
--- Callback ポートは 49153 で固定運用（mcp.json 側も --port 49153 を指定）。
--- 49153 が他用途で使用中の場合のみ、別の動的ポート（例: 50153 / 51153 / 52153 / 53153）
--- に変更し、本SQLの OAUTH_REDIRECT_URI と mcp.json の --port を必ず一致させてください。
+-- [03_mcp] Step 3: PAT (Programmatic Access Token) 発行
+-- Kiro / Cursor / Claude Desktop など mcp-remote 系クライアントは
+-- Dynamic Client Registration (RFC 7591) を要求するが、Snowflake は未対応のため
+-- PAT を Bearer として渡す方式が現状の現実解（公式 KB 推奨）。
 -- =============================================================================
 USE ROLE ACCOUNTADMIN;
 
-CREATE OR REPLACE SECURITY INTEGRATION BRAZE_MCP_OAUTH
-  TYPE = OAUTH
-  OAUTH_CLIENT = CUSTOM
-  ENABLED = TRUE
-  OAUTH_CLIENT_TYPE = 'CONFIDENTIAL'
-  OAUTH_REDIRECT_URI = 'http://localhost:49153/oauth/callback'  -- 固定
-  OAUTH_ALLOW_NON_TLS_REDIRECT_URI = TRUE  -- localhost(http) を許可
-  OAUTH_ISSUE_REFRESH_TOKENS = TRUE
-  OAUTH_REFRESH_TOKEN_VALIDITY = 7776000  -- 90日
-  OAUTH_USE_SECONDARY_ROLES = NONE;
+-- 既に R_HANDSON は 01_setup で作成済み・必要権限付与済みの想定
+-- PAT は USER に紐付けて発行する。Role制限を R_HANDSON に固定。
+-- <参加者ユーザー名> は実ユーザー名に置換してください。
 
--- クライアントID / シークレットの取得（控えておく）
-SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('BRAZE_MCP_OAUTH');
+ALTER USER IF EXISTS <参加者ユーザー名>
+  ADD PROGRAMMATIC ACCESS TOKEN pat_handson_mcp
+    ROLE_RESTRICTION = 'R_HANDSON'
+    DAYS_TO_EXPIRY = 7
+    COMMENT = 'Cortex Agent x MCP handson';
+-- ★ 結果に表示される token_secret は二度と表示されません。必ず控えてください。
+
+-- 任意: 発行済みPATの一覧確認
+SHOW USER PROGRAMMATIC ACCESS TOKENS FOR USER <参加者ユーザー名>;
+
+
+-- =============================================================================
+-- [おまけ] OAuth Security Integration（Snowflake Intelligence など
+-- Snowflake自身が制御するクライアント向け。Kiro/mcp-remote では使えません）
+-- =============================================================================
+-- USE ROLE ACCOUNTADMIN;
+-- CREATE OR REPLACE SECURITY INTEGRATION BRAZE_MCP_OAUTH
+--   TYPE = OAUTH
+--   OAUTH_CLIENT = CUSTOM
+--   ENABLED = TRUE
+--   OAUTH_CLIENT_TYPE = 'CONFIDENTIAL'
+--   OAUTH_REDIRECT_URI = 'http://localhost:49153/oauth/callback'
+--   OAUTH_ALLOW_NON_TLS_REDIRECT_URI = TRUE
+--   OAUTH_ISSUE_REFRESH_TOKENS = TRUE
+--   OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+--   OAUTH_USE_SECONDARY_ROLES = NONE;
+-- SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('BRAZE_MCP_OAUTH');
 
 
 -- =============================================================================

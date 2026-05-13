@@ -135,7 +135,7 @@ Cortex Agent を作成してください。
   STEP 03. Kiro から MCP 経由で Cortex Agent を呼び出す
 ================================================================================
 ※ 事前に ~/.kiro/settings/mcp.json に snowflake-braze を登録し、
-   `mcp-remote` 経由の OAuth 認証を完了させておくこと
+   PAT (Programmatic Access Token) を Bearer として設定しておくこと
    （詳細: 03_mcp/README.md / 03_mcp/mcp.json.template）
 
 [Kiro-1]

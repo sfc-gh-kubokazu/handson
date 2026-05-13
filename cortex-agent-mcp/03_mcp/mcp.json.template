@@ -1,24 +1,19 @@
 {
-  "_comment": "Snowflake-managed MCP Server (OAuth) config for Kiro. Replace placeholders.",
+  "_comment": "Snowflake-managed MCP Server (PAT Bearer) config for Kiro / Cursor / Claude Desktop. Replace placeholders.",
   "_notes": [
-    "Kiro has no OAuth GUI. Edit ~/.kiro/settings/mcp.json directly.",
-    "OAuth flow is handled by mcp-remote (OAuth 2.0 + PKCE). Requires Node.js / npx.",
+    "Kiro has no MCP GUI. Edit ~/.kiro/settings/mcp.json directly.",
+    "PAT (Programmatic Access Token) is the supported auth path for mcp-remote based clients.",
+    "OAuth fails on these clients because Snowflake-managed MCP server does not expose RFC 7591 Dynamic Client Registration.",
+    "Reference: https://community.snowflake.com/s/article/resolving-mcp-server-authentication-errors-cursor-claude",
     "Replace <account_url> with your Snowflake account URL (use hyphens, not underscores).",
-    "Get OAUTH_CLIENT_ID / OAUTH_CLIENT_SECRET from SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('BRAZE_MCP_OAUTH').",
-    "Callback port is FIXED to 49153. Both Snowflake's OAUTH_REDIRECT_URI and the --port arg below must match.",
-    "If 49153 is in use, change BOTH the Security Integration URI and --port (e.g., 50153 / 51153 / 52153 / 53153)."
+    "Replace <YOUR_PAT> with the token_secret returned by ALTER USER ... ADD PROGRAMMATIC ACCESS TOKEN."
   ],
   "mcpServers": {
     "snowflake-braze": {
-      "command": "npx",
-      "args": [
-        "mcp-remote",
-        "https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/BRAZE_MCP_SERVER",
-        "--client-id",     "<OAUTH_CLIENT_ID>",
-        "--client-secret", "<OAUTH_CLIENT_SECRET>",
-        "--scope",         "session:role:R_HANDSON",
-        "--port",          "49153"
-      ],
+      "url": "https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/BRAZE_MCP_SERVER",
+      "headers": {
+        "Authorization": "Bearer <YOUR_PAT>"
+      },
       "disabled": false,
       "autoApprove": []
     }

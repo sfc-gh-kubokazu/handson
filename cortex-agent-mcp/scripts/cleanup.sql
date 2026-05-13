@@ -12,11 +12,16 @@
 
 
 -- -----------------------------------------------------------------------------
--- 1. OAuth Security Integration を削除（ACCOUNTADMIN 必要）
+-- 1. PAT (Programmatic Access Token) を削除（必要に応じて）
+--    ※ <参加者ユーザー名> は実ユーザー名に置換
 -- -----------------------------------------------------------------------------
 USE ROLE ACCOUNTADMIN;
 
-DROP SECURITY INTEGRATION IF EXISTS BRAZE_MCP_OAUTH;
+ALTER USER IF EXISTS <参加者ユーザー名>
+  REMOVE PROGRAMMATIC ACCESS TOKEN pat_handson_mcp;
+
+-- 任意: 旧 OAuth Security Integration を作成していた場合のみ実行
+-- DROP SECURITY INTEGRATION IF EXISTS BRAZE_MCP_OAUTH;
 
 
 -- -----------------------------------------------------------------------------
@@ -87,4 +92,4 @@ SHOW DATABASES         LIKE 'HANDSON_CORTEX_AGENT';
 SHOW DATABASES         LIKE 'BRAZE_USER_EVENT_DEMO_DATASET';
 SHOW WAREHOUSES        LIKE 'WH_HANDSON';
 SHOW ROLES             LIKE 'R_HANDSON';
-SHOW INTEGRATIONS      LIKE 'BRAZE_MCP_OAUTH';
+SHOW INTEGRATIONS      LIKE 'BRAZE_MCP_OAUTH';  -- 旧OAuth残骸（通常は無し）

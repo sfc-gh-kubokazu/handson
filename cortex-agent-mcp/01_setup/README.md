@@ -186,6 +186,6 @@ SELECT 'CAMPAIGN_REVENUE', COUNT(*) FROM CAMPAIGN_REVENUE;
 - [ ] `HANDSON_CORTEX_AGENT.BRAZE` に6つのマートテーブルが作成済み
 - [ ] `WH_HANDSON` ウェアハウスが作成済み
 
-> 💡 認証は **OAuth** を使用します（[03_mcp](../03_mcp/README.md) で設定）。PATの事前発行は不要です。
+> 💡 認証は **PAT (Programmatic Access Token)** を使用します（[03_mcp](../03_mcp/README.md) Step 3 で発行）。
 
 → 続いて **[02_agent](../02_agent/README.md)** へ進みます。

@@ -72,7 +72,7 @@ Snowflakeの **AI開発エージェント = Cortex Code (CoCo)** を活用しま
 
 | ステップ | フォルダ | 内容 |
 |---|---|---|
-| 1 | [`01_setup/`](./01_setup/) | 環境準備（Marketplace Get / ロール / PAT発行） |
+| 1 | [`01_setup/`](./01_setup/) | 環境準備（Marketplace Get / ロール / マートテーブル作成） |
 | 2 | [`02_agent/`](./02_agent/) | セマンティックビュー作成 → Cortex Agent作成 |
 | 3 | [`03_mcp/`](./03_mcp/) | Kiro / Claude Desktop に Snowflake MCP設定 |
 | 4 | [`04_advanced/`](./04_advanced/) | 発展課題（実データへの置換・他Agent統合等） |
