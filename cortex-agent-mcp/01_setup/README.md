@@ -179,25 +179,6 @@ SELECT 'CAMPAIGN_REVENUE', COUNT(*) FROM CAMPAIGN_REVENUE;
 
 ---
 
-## Step 4: PAT（Programmatic Access Token）発行
-
-Step 03（MCP連携）で使うPATを事前発行しておきます。
-
-### 手順
-1. Snowsight 右上のユーザーメニュー → **Settings**
-2. 左サイドメニュー → **Authentication**
-3. **Programmatic Access Tokens** セクション → **+ Generate new token**
-4. 設定:
-   - **Name**: `pat_handson_mcp`
-   - **Role restrictions**: `R_HANDSON`（または使用ロール）
-   - **Expiration**: 7日（適宜）
-5. **Generate** → 表示されたトークンを安全な場所に保存
-   - ⚠️ **再表示不可**。コピーし忘れたら再発行
-
-> 💡 詳細は [Programmatic Access Tokens 公式ドキュメント](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) 参照
-
----
-
 ## チェックポイント
 
 ✅ ここまでで以下が完了していればOKです：
@@ -205,6 +186,7 @@ Step 03（MCP連携）で使うPATを事前発行しておきます。
 - [ ] `BRAZE_USER_EVENT_DEMO_DATASET` が取得済み
 - [ ] `HANDSON_CORTEX_AGENT.BRAZE` に6つのマートテーブルが作成済み
 - [ ] `WH_HANDSON` ウェアハウスが作成済み
-- [ ] PATを発行・保管済み
+
+> 💡 認証は **OAuth** を使用します（[03_mcp](../03_mcp/README.md) で設定）。PATの事前発行は不要です。
 
 → 続いて **[02_agent](../02_agent/README.md)** へ進みます。
