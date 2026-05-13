@@ -186,6 +186,20 @@ SHOW AGENTS IN SCHEMA HANDSON_CORTEX_AGENT.BRAZE;
 DESC AGENT HANDSON_CORTEX_AGENT.BRAZE.BRAZE_AGENT;
 ```
 
+### Agent への USAGE 権限付与（重要）
+
+> ⚠️ **CREATE OR REPLACE AGENT を実行すると旧オブジェクトが破棄され、grants も一緒に消えます。**
+> Agent を作成 / 再作成するたびに必ず以下を実行し、利用ロールに USAGE を付与してください。
+> これを忘れると Kiro / MCP 経由で `The agent does not exist or access is not authorized for the current role` エラーになります。
+
+```sql
+USE ROLE SECURITYADMIN;
+GRANT USAGE ON AGENT HANDSON_CORTEX_AGENT.BRAZE.BRAZE_AGENT TO ROLE R_HANDSON;
+
+-- 確認: 「USAGE | CORTEX_AGENT | HANDSON_CORTEX_AGENT.BRAZE.BRAZE_AGENT」が見えればOK
+SHOW GRANTS TO ROLE R_HANDSON;
+```
+
 ---
 
 ## Step 4: Snowflake Intelligence から動作確認（5分）

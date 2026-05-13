@@ -102,6 +102,10 @@ GRANT USAGE ON AGENT HANDSON_CORTEX_AGENT.BRAZE.BRAZE_AGENT TO ROLE R_HANDSON;
 GRANT SELECT ON SEMANTIC VIEW HANDSON_CORTEX_AGENT.BRAZE.SEMANTIC_VIEW_BRAZE_CAMPAIGN TO ROLE R_HANDSON;
 ```
 
+> ⚠️ **CREATE OR REPLACE AGENT で再作成すると Agent への USAGE 権限は失われます。**
+> Agent を作り直したら必ず `GRANT USAGE ON AGENT ... TO ROLE R_HANDSON` を再実行してください。
+> これを忘れると Kiro / MCP 側で `The agent does not exist or access is not authorized for the current role` エラーになります。
+
 ### 2-2. MCP Server を作成
 
 ```sql
