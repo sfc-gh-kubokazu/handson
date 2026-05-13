@@ -3,6 +3,41 @@
 **Snowflake Cortex Agent を作成し、外部IDE（Kiro / Claude Desktop等）からMCP経由で呼び出す**ハンズオンです。
 データ分析エージェントを作って、普段使いのIDEから自然言語で叩ける状態を体験します。
 
+---
+
+## 🛠️ 本ハンズオンの開発環境: Cortex Code (CoCo)
+
+本ハンズオンでは、エージェント・セマンティックビュー・SQLの作成にあたり、
+Snowflakeの **AI開発エージェント = Cortex Code (CoCo)** を活用します。
+**自然言語の指示だけ** でSnowflake上のリソースを構築・操作できる開発体験を体感していただきます。
+
+### Cortex Code in Snowsight（Web UI）
+
+![Cortex Code in Snowsight](./assets/screenshots/00_intro/01_cortex_code_snowsight.png)
+
+**お客様の意図とデータを理解するエージェントシステム**
+
+- 🎯 **Snowflakeを理解** — DB・スキーマ・テーブル・セマンティックモデル等のデータカタログに関する最新の専門知識を持つ
+- 🧭 **コンテキスト認識** — UI上のどこにいるか・何に取り組んでいるかを把握、ナビゲート中も会話履歴を保持
+- 🔒 **セキュアバイデザイン** — RBACに準拠し、ユーザーがアクセス可能なデータ・オブジェクトのみ操作
+- 🤖 **複雑なタスクを自動化** — 適切なエージェントに自動ルーティング、アプリ構築〜コスト管理〜データガバナンスまで対応
+
+> 本ハンズオンでは **Snowsight内蔵のCortex Code (Web UI)** を使用するため、**インストール不要・ブラウザのみで参加可能**。
+
+### Cortex Code CLI（参考）
+
+![Cortex Code CLI](./assets/screenshots/00_intro/02_cortex_code_cli.png)
+
+**Snowflakeへのコマンドラインエージェントインターフェース**
+
+- 🚀 **CI/CDを意識した開発を加速** — アプリ・Streamlit・データパイプライン等の作成とデプロイの開発者体験を簡素化
+- 🧠 **Snowflakeを理解** — 権限・アカウント・接続・SQLの細かな差異まで把握
+- 💻 **いつもの開発環境で利用** — ターミナル / VS Code / Cursor 等のコードエディタから実行可能
+
+> CLI版は本ハンズオン後の発展利用としてご紹介します。
+
+---
+
 ## 想定所要時間
 **約2時間**
 
