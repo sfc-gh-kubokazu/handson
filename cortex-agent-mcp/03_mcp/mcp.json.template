@@ -5,9 +5,8 @@
     "OAuth flow is handled by mcp-remote (OAuth 2.0 + PKCE). Requires Node.js / npx.",
     "Replace <account_url> with your Snowflake account URL (use hyphens, not underscores).",
     "Get OAUTH_CLIENT_ID / OAUTH_CLIENT_SECRET from SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('BRAZE_MCP_OAUTH').",
-    "Snowflake's OAUTH_REDIRECT_URI accepts only ONE URI. mcp-remote picks one of these ports:",
-    "  3128 / 4649 / 6588 / 8008 / 9091 / 49153 / 50153 / 51153 / 52153 / 53153",
-    "If you hit redirect_uri_mismatch, ALTER the Security Integration with the actual port shown in the error."
+    "Callback port is FIXED to 49153. Both Snowflake's OAUTH_REDIRECT_URI and the --port arg below must match.",
+    "If 49153 is in use, change BOTH the Security Integration URI and --port (e.g., 50153 / 51153 / 52153 / 53153)."
   ],
   "mcpServers": {
     "snowflake-braze": {
@@ -15,9 +14,10 @@
       "args": [
         "mcp-remote",
         "https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/BRAZE_MCP_SERVER",
-        "--client-id", "<OAUTH_CLIENT_ID>",
+        "--client-id",     "<OAUTH_CLIENT_ID>",
         "--client-secret", "<OAUTH_CLIENT_SECRET>",
-        "--scope", "session:role:R_HANDSON"
+        "--scope",         "session:role:R_HANDSON",
+        "--port",          "49153"
       ],
       "disabled": false,
       "autoApprove": []
