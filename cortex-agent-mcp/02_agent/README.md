@@ -83,7 +83,7 @@ HANDSON_CORTEX_AGENT.BRAZE スキーマの以下6テーブルから、
 できるセマンティックビューを作成してください。
 
 【対象テーブル】
-- EMAIL_SENT（送信履歴）
+- EMAIL_SENT（送信履歴）  ※ハブ
 - EMAIL_DELIVERY（配信成功）
 - EMAIL_OPEN（開封）
 - EMAIL_CLICK（クリック）
@@ -101,7 +101,29 @@ HANDSON_CORTEX_AGENT.BRAZE スキーマの以下6テーブルから、
 - CAMPAIGN_ID, COUNTRY, LANGUAGE, GENDER
 - 送信日時の月・週・日
 
-セマンティックビュー名は SEMANTIC_VIEW_BRAZE_CAMPAIGN にしてください。
+【セマンティックビュー名】
+SEMANTIC_VIEW_BRAZE_CAMPAIGN
+
+【構造の指針】
+- EMAIL_SENT を中心ハブとし、他5テーブルから sent への多対一リレーションを張る
+- 各テーブルの PRIMARY KEY は (USER_ID, CAMPAIGN_ID) の 2 カラムで定義
+  （RELATIONSHIPS の REFERENCES 側のキーと PK のカラム数を必ず一致させる）
+- RELATIONSHIPS は `child (USER_ID, CAMPAIGN_ID) REFERENCES sent` の形
+- 日本語/英語の SYNONYMS と AI_SQL_GENERATION ガイダンスも付与
+
+【CREATE SEMANTIC VIEW の構文ハマりどころ（必ず守ること）】
+- ビュー全体の COMMENT = '...' は METRICS の後（句リストの最後）に書く
+  TABLES/FACTS/DIMENSIONS/METRICS 各要素の COMMENT は WITH SYNONYMS の後ろ
+- METRICS で別テーブルを参照する場合の構文順は次の通り:
+    <metric_name>
+      USING (<relationship>)
+      AS <aggregate_expr>
+      WITH SYNONYMS = (...)
+      COMMENT = '...'
+  ※ `AS COUNT(...) USING(...)` のように USING を後置きしないこと
+- 派生メトリクス（率系）で集約済みメトリクスを再利用する場合は
+  PRIVATE で「分母用の集約」を別途定義しておくと安全
+- 失敗時はエラーメッセージを読み、構文順を上記に揃えて再試行
 ```
 
 → CoCo が `semantic-view` スキルを起動し、テーブル構造調査 → リレーション提案 → SEMANTIC VIEW DDL 生成 → 実行 まで対話的に進めてくれます。
