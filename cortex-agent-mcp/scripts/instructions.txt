@@ -1,0 +1,219 @@
+================================================================================
+  Cortex Agent x MCP ハンズオン: 実行インストラクションまとめ
+================================================================================
+
+本ファイルは「上から順に実行する」だけでハンズオンが進むよう、
+作業手順・CoCo（Cortex Code）に渡すプロンプト・SQLの実行タイミングを
+時系列で並べたものです。
+
+詳細な背景・スクリーンショットは各 README を参照してください。
+  - cortex-agent-mcp/README.md            （全体概要・Cortex Code紹介）
+  - cortex-agent-mcp/01_setup/README.md   （環境準備）
+  - cortex-agent-mcp/02_agent/README.md   （Agent 作成）
+  - cortex-agent-mcp/03_mcp/README.md     （MCP連携）
+  - cortex-agent-mcp/appendix_search/README.md （Cortex Search 補足）
+
+実行用SQLは scripts/setup.sql にまとめてあります。
+
+--------------------------------------------------------------------------------
+  事前準備
+--------------------------------------------------------------------------------
+[ ] Snowflakeアカウントにログイン可能（Cortex機能利用可リージョン/エディション）
+[ ] モダンブラウザ（Chrome / Edge / Safari）
+[ ] 外部IDE: Kiro または Claude Desktop / Cursor をインストール済み
+[ ] ACCOUNTADMIN または同等の権限を持つロールが利用可能
+
+--------------------------------------------------------------------------------
+  STEP 01. 環境準備（約10分）  ※ 詳細: 01_setup/README.md
+--------------------------------------------------------------------------------
+
+[01-1] Marketplace から Braze データを取得（UI操作）
+  1. Snowsight → Data Products → Marketplace
+  2. 検索ボックスに "Braze User Event Demo Dataset" を入力
+  3. 該当リスティングを選択 → "無料で取得 (Get)"
+  4. Database name は "BRAZE_USER_EVENT_DEMO_DATASET"（デフォルト）のまま取得
+  5. 確認SQL（setup.sql 冒頭ブロック）を実行 → 62 ビューが返ればOK
+
+[01-2] ロール / DB / スキーマ / ウェアハウス作成（SQL）
+  - scripts/setup.sql の [01_setup] Step 2 ブロックを実行
+  - ロール作成は「参加者を分離する場合のみ」。シンプルに進める場合は省略可
+  - GRANT ROLE R_HANDSON TO USER <参加者ユーザー名> は要置換
+
+[01-3] サンプリング済みマートテーブル作成（SQL）
+  - scripts/setup.sql の [01_setup] Step 3 ブロックを実行
+  - 6テーブル作成 + 件数確認まで実行
+  - 期待件数: SENT=10万 / DELIVERY=10万 / OPEN=5万 / CLICK=2万 / CV=5万 / REVENUE=5万
+
+[01-4] チェックポイント
+  [ ] BRAZE_USER_EVENT_DEMO_DATASET が取得済み
+  [ ] HANDSON_CORTEX_AGENT.BRAZE に6テーブル作成済み
+  [ ] WH_HANDSON が作成済み
+
+--------------------------------------------------------------------------------
+  STEP 02. Cortex Agent 作成（約35分）  ※ 詳細: 02_agent/README.md
+--------------------------------------------------------------------------------
+このステップは Snowsight 内蔵の Cortex Code (CoCo) Web UI に対して
+"自然言語で指示するだけ" で進めます。SQL は基本書きません。
+
+[02-1] CoCo Web UI を開く
+  1. Snowsight → AI & ML → Cortex Code（または Studio → Cortex Code）
+  2. 新規セッション開始
+
+[02-2] CoCo 接続確認プロンプト
+----------------------------------------------------------------- prompt -----
+現在の接続情報（アカウント・ユーザー・ロール・ウェアハウス）を教えて
+------------------------------------------------------------------------------
+
+----------------------------------------------------------------- prompt -----
+HANDSON_CORTEX_AGENT.BRAZE スキーマのテーブル一覧と件数を教えて
+------------------------------------------------------------------------------
+  → 6テーブル件数が返ればOK
+
+[02-3] 作業コンテキスト指定プロンプト
+----------------------------------------------------------------- prompt -----
+これから HANDSON_CORTEX_AGENT.BRAZE スキーマで作業します。
+ウェアハウスは WH_HANDSON を使ってください。
+------------------------------------------------------------------------------
+
+[02-4] セマンティックビュー作成プロンプト
+----------------------------------------------------------------- prompt -----
+HANDSON_CORTEX_AGENT.BRAZE スキーマの以下6テーブルから、
+キャンペーン×期間×国別のメールエンゲージメント分析が
+できるセマンティックビューを作成してください。
+
+【対象テーブル】
+- EMAIL_SENT（送信履歴）
+- EMAIL_DELIVERY（配信成功）
+- EMAIL_OPEN（開封）
+- EMAIL_CLICK（クリック）
+- CAMPAIGN_CONVERSION（CV）
+- CAMPAIGN_REVENUE（収益）
+
+【共通キー】
+- USER_ID, CAMPAIGN_ID
+
+【欲しいメトリクス】
+- 送信数 / 開封数 / クリック数 / CV数 / 収益合計
+- 開封率（OPEN/SENT）, クリック率（CLICK/OPEN）, CV率（CV/CLICK）
+
+【欲しいディメンション】
+- CAMPAIGN_ID, COUNTRY, LANGUAGE, GENDER
+- 送信日時の月・週・日
+
+セマンティックビュー名は SEMANTIC_VIEW_BRAZE_CAMPAIGN にしてください。
+------------------------------------------------------------------------------
+  → CoCoが semantic-view スキルを起動し、構造調査→DDL生成→実行まで対話的に進めます
+
+[02-5] セマンティックビュー確認SQL（setup.sql の [02_agent] ブロック）
+  - SHOW / DESC SEMANTIC VIEW
+  - SELECT FROM SEMANTIC_VIEW(...) で簡易動作確認
+
+[02-6] Cortex Agent 作成プロンプト
+----------------------------------------------------------------- prompt -----
+作成した SEMANTIC_VIEW_BRAZE_CAMPAIGN を使って、
+Cortex Agent を作成してください。
+
+【Agent名】 BRAZE_AGENT
+【DB.Schema】 HANDSON_CORTEX_AGENT.BRAZE
+【ツール】 Cortex Analyst（上記セマンティックビューを参照）
+【動作】
+- 日本語の質問にも英語で同様の意味を理解して回答
+- データに基づく回答のみ。推測しない
+- 数値は適切な単位（円/件/%）で返答
+- 結果が0件の場合はその旨を明示
+
+【サンプル質問】
+- 直近のメール開封率トップ10キャンペーンは？
+- 国別のクリック率を比較して
+- 月次のCV件数推移を教えて
+------------------------------------------------------------------------------
+
+[02-7] Agent 確認SQL（setup.sql 内）
+  - SHOW AGENTS / DESC AGENT BRAZE_AGENT
+
+[02-8] Snowflake Intelligence から動作確認（UI操作）
+  1. Snowsight → AI & ML → Snowflake Intelligence
+  2. Agent 選択ドロップダウンで BRAZE_AGENT を選択
+  3. サンプル質問:
+     - 直近のメール開封率トップ10キャンペーンは？
+     - 国別のクリック率を高い順に教えて
+     - 月次の送信数とCV件数の推移を教えて
+     - 言語別の開封率の差は？
+
+[02-9] チェックポイント
+  [ ] CoCo Web UIが動作
+  [ ] SEMANTIC_VIEW_BRAZE_CAMPAIGN が作成済み
+  [ ] BRAZE_AGENT が作成済み
+  [ ] Snowflake Intelligence から自然言語で回答取得
+
+--------------------------------------------------------------------------------
+  STEP 03. MCP連携（約35分）  ※ 詳細: 03_mcp/README.md
+--------------------------------------------------------------------------------
+
+[03-1] MCP Server / 権限作成（SQL）
+  - scripts/setup.sql の [03_mcp] Step 2 ブロックを実行
+  - 2-1: ロール権限 → 2-2: CREATE MCP SERVER → 2-3: USAGE 付与
+
+[03-2] Kiro の OAuth Callback URL を確認
+  - Kiro の MCP 設定画面 「Add MCP Server (Streamable HTTP / OAuth)」を開き
+    Callback URL（例: http://localhost:<port>/oauth/callback）を控える
+
+[03-3] OAuth Security Integration 作成（SQL）
+  - scripts/setup.sql の [03_mcp] Step 3 ブロックを実行
+  - <port> は [03-2] で控えた値に置換
+  - SYSTEM$SHOW_OAUTH_CLIENT_SECRETS の戻りから
+    OAUTH_CLIENT_ID と OAUTH_CLIENT_SECRET を控える
+
+[03-4] Kiro に MCP サーバを設定（UI操作）
+  Server URL:
+    https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/BRAZE_MCP_SERVER
+    ※ <account_url> のアンダースコアはハイフンに変換
+  Auth Type: OAuth 2.0
+  Client ID / Secret: 03-3 で取得した値
+  Authorization URL: https://<account_url>/oauth/authorize
+  Token URL:         https://<account_url>/oauth/token-request
+  Scope: session:role:R_HANDSON
+
+  サンプル mcp.json は cortex-agent-mcp/03_mcp/mcp.json.template を参照
+
+[03-5] 認証フロー
+  1. Kiro 保存 → 再起動
+  2. ツール一覧に braze-agent が表示 → クリックで初回認証
+  3. ブラウザで Snowflake ログイン → Allow
+  4. Kiro に戻ると認証完了
+
+[03-6] Kiro から動作確認プロンプト
+----------------------------------------------------------------- prompt -----
+@snowflake-braze BRAZE_AGENT で「直近のメール開封率トップ10キャンペーンは？」
+------------------------------------------------------------------------------
+----------------------------------------------------------------- prompt -----
+@snowflake-braze 「国別のクリック率を比較して」
+------------------------------------------------------------------------------
+----------------------------------------------------------------- prompt -----
+@snowflake-braze 「月次のCV件数推移を教えて」
+------------------------------------------------------------------------------
+
+[03-7] チェックポイント
+  [ ] BRAZE_MCP_SERVER 作成済み
+  [ ] OAuth Security Integration 有効
+  [ ] Kiro から OAuth 経由で MCP 認識
+  [ ] Kiro チャットから回答が返る
+
+--------------------------------------------------------------------------------
+  STEP 04. 発展課題（任意）  ※ 詳細: 04_advanced/README.md
+--------------------------------------------------------------------------------
+- 実データへの置換 / 他Agent統合 / Cortex Search 連携 等
+
+--------------------------------------------------------------------------------
+  Appendix. Cortex Search （ハンズオン本編には含まれません）
+--------------------------------------------------------------------------------
+  ※ 詳細: appendix_search/README.md
+
+--------------------------------------------------------------------------------
+  クリーンアップ（任意）
+--------------------------------------------------------------------------------
+- scripts/setup.sql 末尾の [片付け] ブロックを必要に応じて実行
+
+================================================================================
+  以上
+================================================================================
