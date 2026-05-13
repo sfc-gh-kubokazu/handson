@@ -143,13 +143,31 @@ GRANT USAGE ON MCP SERVER HANDSON_CORTEX_AGENT.BRAZE.BRAZE_MCP_SERVER TO ROLE R_
 
 ## Step 3: OAuth Security Integration 作成（10分）
 
-OAuth認証で外部クライアント（Kiro等）からSnowflakeに接続できるようにします。
+OAuth認証で外部クライアント（Kiro）からSnowflakeに接続できるようにします。
 
-### 3-1. リダイレクトURI の確認
+### 3-1. Kiro が使う OAuth Callback URI について
 
-Kiro側のOAuth Callback URL を確認します。
-- 一般的な値: `http://localhost:<port>/oauth/callback`
-- Kiroのバージョン・設定により異なるため、Kiroの「Add MCP Server (OAuth)」設定画面で表示されるURIをコピー
+Kiro には「Add MCP Server (OAuth)」専用の GUI はなく、`mcp.json` を直接編集して設定します。
+OAuth コールバックは **`mcp-remote`（OAuth 2.0 + PKCE 対応プロキシ）** が代理で受け取り、
+利用可能なポートを以下の **10候補から1つ選んで** ローカルで起動します。
+
+```
+http://localhost:3128/oauth/callback
+http://localhost:4649/oauth/callback
+http://localhost:6588/oauth/callback
+http://localhost:8008/oauth/callback
+http://localhost:9091/oauth/callback
+http://localhost:49153/oauth/callback
+http://localhost:50153/oauth/callback
+http://localhost:51153/oauth/callback
+http://localhost:52153/oauth/callback
+http://localhost:53153/oauth/callback
+```
+
+> ⚠️ **Snowflake の `OAUTH_REDIRECT_URI` は1値のみ**。複数候補すべて事前登録はできません。
+> 対策: Security Integration を **代表ポート1つ** で作成 → Kiro 接続時に
+> ブラウザに表示されたエラーで実際に使われたポートを確認 → `ALTER SECURITY INTEGRATION`
+> で URI を更新、というフローを推奨します。
 
 ### 3-2. Security Integration 作成
 
@@ -161,7 +179,7 @@ CREATE OR REPLACE SECURITY INTEGRATION BRAZE_MCP_OAUTH
   OAUTH_CLIENT = CUSTOM
   ENABLED = TRUE
   OAUTH_CLIENT_TYPE = 'CONFIDENTIAL'
-  OAUTH_REDIRECT_URI = 'http://localhost:<port>/oauth/callback'
+  OAUTH_REDIRECT_URI = 'http://localhost:49153/oauth/callback'  -- まずは代表ポートで作成
   OAUTH_ISSUE_REFRESH_TOKENS = TRUE
   OAUTH_REFRESH_TOKEN_VALIDITY = 7776000  -- 90日
   OAUTH_USE_SECONDARY_ROLES = NONE;
@@ -173,58 +191,64 @@ SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('BRAZE_MCP_OAUTH');
 > 💡 `SYSTEM$SHOW_OAUTH_CLIENT_SECRETS` の引数は **大文字** で渡すこと。
 > 返却JSONから `OAUTH_CLIENT_ID` と `OAUTH_CLIENT_SECRET` を控える。
 
+#### Kiro 接続時に Callback ポートが違ったら
+
+Kiro 起動後にブラウザで `redirect_uri_mismatch` 系エラーが出たら、エラー画面に表示された
+ポート（例: `6588`）を読み取り、以下で更新します。
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+ALTER SECURITY INTEGRATION BRAZE_MCP_OAUTH
+  SET OAUTH_REDIRECT_URI = 'http://localhost:6588/oauth/callback';
+```
+
 ---
 
-## Step 4: Kiro に OAuth 設定（10分）
+## Step 4: Kiro に MCP を設定（10分）
 
-### 4-1. Kiro の MCP 設定画面を開く
+### 4-1. mcp.json を直接編集
 
-KiroのMCP設定画面で「Add MCP Server (Streamable HTTP / OAuth)」を選択。
-バージョンによりUIが異なります。
-
-### 4-2. 設定値
-
-| 項目 | 値 |
-|---|---|
-| Server URL | `https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/BRAZE_MCP_SERVER` |
-| Auth Type | OAuth 2.0 |
-| Client ID | Step 3-2で取得した OAUTH_CLIENT_ID |
-| Client Secret | Step 3-2で取得した OAUTH_CLIENT_SECRET |
-| Authorization URL | `https://<account_url>/oauth/authorize` |
-| Token URL | `https://<account_url>/oauth/token-request` |
-| Scope | `session:role:R_HANDSON` |
-
-> ⚠️ `<account_url>` のアンダースコアは **ハイフン** に変換（例: `xy12345.us-east-1.snowflakecomputing.com`）。
-
-### サンプル mcp.json（Kiro/Claude Desktop形式）
-
-`./mcp.json.template` 参照。
+Kiro には MCP 用 GUI が無いため、`~/.kiro/settings/mcp.json` を編集します。
+本ハンズオンでは `mcp-remote`（npm パッケージ）を経由して OAuth 認証を扱います。
 
 ```json
 {
   "mcpServers": {
     "snowflake-braze": {
-      "url": "https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/BRAZE_MCP_SERVER",
-      "auth": {
-        "type": "oauth2",
-        "client_id": "<OAUTH_CLIENT_ID>",
-        "client_secret": "<OAUTH_CLIENT_SECRET>",
-        "authorization_url": "https://<account_url>/oauth/authorize",
-        "token_url": "https://<account_url>/oauth/token-request",
-        "scope": "session:role:R_HANDSON"
-      }
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/BRAZE_MCP_SERVER",
+        "--client-id", "<OAUTH_CLIENT_ID>",
+        "--client-secret", "<OAUTH_CLIENT_SECRET>",
+        "--scope", "session:role:R_HANDSON"
+      ],
+      "disabled": false,
+      "autoApprove": []
     }
   }
 }
 ```
 
+> ⚠️ `<account_url>` のアンダースコアは **ハイフン** に変換
+> （例: `xy12345.us-east-1.snowflakecomputing.com`）。
+> 詳細サンプルは `./mcp.json.template` を参照。
+
+### 4-2. 前提
+
+- Node.js / `npx` が実行可能であること（`npx --version` で確認）
+- 初回起動時に `mcp-remote` が npm から自動取得される
+
 ### 4-3. 接続フロー
 
-1. Kiroで保存
-2. Kiro再起動
-3. ツール一覧に `braze-agent` が表示されたらクリックで初回認証フロー開始
-4. ブラウザでSnowflakeログイン → Consent画面で **Allow**
-5. Kiroに戻ると認証完了 → ツール利用可能
+1. `mcp.json` を保存
+2. Kiro 左パネル → **MCP Servers** タブで `snowflake-braze` を再接続
+   （または `Cmd+Shift+P` → "MCP" 検索 → 再接続コマンド）
+3. ブラウザが自動で開く → Snowflake ログイン → Consent 画面で **Allow**
+4. Callback ポートが Security Integration と一致していなければ
+   `redirect_uri_mismatch` エラー → **Step 3-2 末尾の ALTER** でポートを更新 → 再接続
+5. ツール一覧に `braze-agent` / `braze-campaign-analyst` が表示されれば成功
 
 ---
 

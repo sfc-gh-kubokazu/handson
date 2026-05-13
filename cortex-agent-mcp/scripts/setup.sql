@@ -181,7 +181,11 @@ GRANT USAGE ON MCP SERVER HANDSON_CORTEX_AGENT.BRAZE.BRAZE_MCP_SERVER TO ROLE R_
 
 -- =============================================================================
 -- [03_mcp] Step 3: OAuth Security Integration
--- <port> は Kiro の OAuth Callback URL を確認して置換
+-- Kiro は mcp-remote 経由で OAuth フローを処理し、Callback ポートは
+-- 以下の10候補から選ばれます（Snowflake側はURI単一値のみ登録可）。
+--   3128 / 4649 / 6588 / 8008 / 9091 / 49153 / 50153 / 51153 / 52153 / 53153
+-- まず代表ポート(49153)で作成し、Kiro接続時に redirect_uri_mismatch が出たら
+-- 末尾の ALTER で実際のポートに更新してください。
 -- =============================================================================
 USE ROLE ACCOUNTADMIN;
 
@@ -190,13 +194,18 @@ CREATE OR REPLACE SECURITY INTEGRATION BRAZE_MCP_OAUTH
   OAUTH_CLIENT = CUSTOM
   ENABLED = TRUE
   OAUTH_CLIENT_TYPE = 'CONFIDENTIAL'
-  OAUTH_REDIRECT_URI = 'http://localhost:<port>/oauth/callback'
+  OAUTH_REDIRECT_URI = 'http://localhost:49153/oauth/callback'
   OAUTH_ISSUE_REFRESH_TOKENS = TRUE
   OAUTH_REFRESH_TOKEN_VALIDITY = 7776000  -- 90日
   OAUTH_USE_SECONDARY_ROLES = NONE;
 
 -- クライアントID / シークレットの取得（控えておく）
 SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('BRAZE_MCP_OAUTH');
+
+-- ★ Kiro 接続後に redirect_uri_mismatch が出た場合は、エラー画面に表示された
+--   ポートで以下を実行して URI を上書き:
+-- ALTER SECURITY INTEGRATION BRAZE_MCP_OAUTH
+--   SET OAUTH_REDIRECT_URI = 'http://localhost:<実際のポート>/oauth/callback';
 
 
 -- =============================================================================

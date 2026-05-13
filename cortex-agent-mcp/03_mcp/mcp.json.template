@@ -1,21 +1,26 @@
 {
-  "_comment": "Snowflake-managed MCP Server (OAuth) config template. Copy to your Kiro/Claude Desktop config and replace placeholders.",
+  "_comment": "Snowflake-managed MCP Server (OAuth) config for Kiro. Replace placeholders.",
   "_notes": [
+    "Kiro has no OAuth GUI. Edit ~/.kiro/settings/mcp.json directly.",
+    "OAuth flow is handled by mcp-remote (OAuth 2.0 + PKCE). Requires Node.js / npx.",
     "Replace <account_url> with your Snowflake account URL (use hyphens, not underscores).",
-    "Get OAUTH_CLIENT_ID and OAUTH_CLIENT_SECRET from SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('BRAZE_MCP_OAUTH').",
-    "OAUTH_REDIRECT_URI in CREATE SECURITY INTEGRATION must match the client callback URL."
+    "Get OAUTH_CLIENT_ID / OAUTH_CLIENT_SECRET from SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('BRAZE_MCP_OAUTH').",
+    "Snowflake's OAUTH_REDIRECT_URI accepts only ONE URI. mcp-remote picks one of these ports:",
+    "  3128 / 4649 / 6588 / 8008 / 9091 / 49153 / 50153 / 51153 / 52153 / 53153",
+    "If you hit redirect_uri_mismatch, ALTER the Security Integration with the actual port shown in the error."
   ],
   "mcpServers": {
     "snowflake-braze": {
-      "url": "https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/BRAZE_MCP_SERVER",
-      "auth": {
-        "type": "oauth2",
-        "client_id": "<OAUTH_CLIENT_ID>",
-        "client_secret": "<OAUTH_CLIENT_SECRET>",
-        "authorization_url": "https://<account_url>/oauth/authorize",
-        "token_url": "https://<account_url>/oauth/token-request",
-        "scope": "session:role:R_HANDSON"
-      }
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://<account_url>/api/v2/databases/HANDSON_CORTEX_AGENT/schemas/BRAZE/mcp-servers/BRAZE_MCP_SERVER",
+        "--client-id", "<OAUTH_CLIENT_ID>",
+        "--client-secret", "<OAUTH_CLIENT_SECRET>",
+        "--scope", "session:role:R_HANDSON"
+      ],
+      "disabled": false,
+      "autoApprove": []
     }
   }
 }
