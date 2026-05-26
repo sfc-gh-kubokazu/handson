@@ -13,11 +13,16 @@
 ## フォルダ構成
 
 ```
-ono-pharma-coco-handson/
+coco-cli-handson-20260528/
 ├── README.md          # 本ファイル
 ├── agenda.md          # 当日アジェンダ
-├── setup-guide.md     # 参加者向け事前準備ガイド
-└── notes/             # 当日メモ・議事録
+├── discussion.md      # 設計ディスカッションまとめ
+└── steps/             # ステップ別手順書
+    ├── step0-1_setup.md
+    ├── step3_agents_md.md
+    ├── step6_semantic_agent.md
+    ├── step7_skills.md
+    └── step8_streamlit.md
 ```
 
 ## 当日のゴール
