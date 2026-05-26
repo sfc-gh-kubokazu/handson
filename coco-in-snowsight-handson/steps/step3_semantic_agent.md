@@ -43,7 +43,7 @@ SNOW_RETAIL_DB.SNOW_RETAIL_SCHEMA の RETAIL_DATA と EC_DATA、PRODUCT_MASTER �
 Semantic View 名: SNOWRETAIL_SALES_SV
 ```
 
-> 参考: `steps/6-1_snowretail_sv.yaml` (オリジナルGitHub)
+> 参考: `scripts/step3-1_semantic_view.yaml`
 
 ### 動作確認
 

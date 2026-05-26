@@ -1,0 +1,15 @@
+definition_version: "2"
+
+entities:
+  monthly_sales_dashboard:
+    type: streamlit
+    identifier:
+      name: MONTHLY_SALES_DASHBOARD
+      schema: SNOWRETAIL_SCHEMA
+      database: SNOWRETAIL_DB
+    stage: SNOWRETAIL_DB.SNOWRETAIL_SCHEMA.FILE
+    query_warehouse: COMPUTE_WH
+    main_file: streamlit_app.py
+    artifacts:
+      - streamlit_app.py
+      - environment.yml

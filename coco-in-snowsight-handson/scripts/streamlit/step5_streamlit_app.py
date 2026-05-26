@@ -41,7 +41,7 @@ mom_delta      = round((total_amount - prev_amount) / prev_amount * 100, 1) if p
 col1, col2, col3 = st.columns(3)
 col1.metric("総売上（最新月）",   f"¥{total_amount:,.0f}", delta=f"{mom_delta:+.1f}% 前月比" if mom_delta else None)
 col2.metric("総販売数（最新月）", f"{total_qty:,} 個")
-col3.metric("集計対象月",         latest_month)
+col3.metric("集計対象月",        latest_month)
 
 st.divider()
 
@@ -70,34 +70,65 @@ st.plotly_chart(fig_trend, use_container_width=True)
 st.divider()
 
 # ── カテゴリ別売上（棒グラフ）────────────────────────────────────────────────
-cat_df = session.sql("""
+broad_df = session.sql("""
     SELECT
-        CATEGORY,
-        SUM(TOTAL_PRICE) AS TOTAL_AMOUNT,
-        SUM(QUANTITY)    AS TOTAL_QUANTITY,
-        ROUND(SUM(TOTAL_PRICE) / NULLIF(SUM(QUANTITY), 0), 0) AS AVG_UNIT_PRICE
+        CASE
+            WHEN CATEGORY IN ('AV・オーディオ','エアコン','カメラ','ゲーム','スマートデバイス',
+                              'テレビ・ディスプレイ','パソコン','プリンター・複合機','プロジェクター',
+                              '冷蔵庫','掃除機','洗濯機','空調・空気清浄','調理家電') THEN '家電'
+            WHEN CATEGORY IN ('お菓子','ミールキット','生鮮・PB食品','精肉・鮮魚・惣菜',
+                              '食品・インスタント','飲料・乳製品')                THEN '食品・飲料'
+            WHEN CATEGORY = '日用品・ヘルスケア'                                  THEN '日用品'
+            WHEN CATEGORY = '衣料品'                                              THEN 'ファッション'
+            WHEN CATEGORY = '文具'                                                THEN '文具'
+            WHEN CATEGORY = 'おもちゃ'                                            THEN 'おもちゃ'
+            ELSE 'その他'
+        END AS BROAD_CATEGORY,
+        SUM(TOTAL_PRICE)                                      AS TOTAL_AMOUNT,
+        SUM(QUANTITY)                                         AS TOTAL_QUANTITY
     FROM SNOWRETAIL_DB.SNOWRETAIL_SCHEMA.MART_SALES
-    GROUP BY CATEGORY
+    GROUP BY BROAD_CATEGORY
     ORDER BY TOTAL_AMOUNT DESC
 """).to_pandas()
 
 fig_cat = px.bar(
-    cat_df,
-    x="CATEGORY",
+    broad_df,
+    x="BROAD_CATEGORY",
     y="TOTAL_AMOUNT",
     title="カテゴリ別売上合計（全期間）",
-    labels={"CATEGORY": "カテゴリ", "TOTAL_AMOUNT": "売上金額（円）"},
+    labels={"BROAD_CATEGORY": "カテゴリ", "TOTAL_AMOUNT": "売上金額（円）"},
     color="TOTAL_AMOUNT",
     color_continuous_scale="Blues",
 )
 fig_cat.update_layout(coloraxis_showscale=False, showlegend=False)
 st.plotly_chart(fig_cat, use_container_width=True)
 
-# ── サマリーテーブル ──────────────────────────────────────────────────────────
+# ── サマリーテーブル（詳細サブカテゴリ）────────────────────────────────────────
+cat_df = session.sql("""
+    SELECT
+        CASE
+            WHEN CATEGORY IN ('AV・オーディオ','エアコン','カメラ','ゲーム','スマートデバイス',
+                              'テレビ・ディスプレイ','パソコン','プリンター・複合機','プロジェクター',
+                              '冷蔵庫','掃除機','洗濯機','空調・空気清浄','調理家電') THEN '家電'
+            WHEN CATEGORY IN ('お菓子','ミールキット','生鮮・PB食品','精肉・鮮魚・惣菜',
+                              '食品・インスタント','飲料・乳製品')                THEN '食品・飲料'
+            WHEN CATEGORY = '日用品・ヘルスケア'                                  THEN '日用品'
+            WHEN CATEGORY = '衣料品'                                              THEN 'ファッション'
+            WHEN CATEGORY = '文具'                                                THEN '文具'
+            WHEN CATEGORY = 'おもちゃ'                                            THEN 'おもちゃ'
+            ELSE 'その他'
+        END AS CATEGORY,
+        SUM(TOTAL_PRICE)                                              AS TOTAL_AMOUNT,
+        SUM(QUANTITY)                                            AS TOTAL_QUANTITY,
+        ROUND(SUM(TOTAL_PRICE) / NULLIF(SUM(QUANTITY), 0), 0)        AS AVG_UNIT_PRICE
+    FROM SNOWRETAIL_DB.SNOWRETAIL_SCHEMA.MART_SALES
+    GROUP BY 1
+    ORDER BY TOTAL_AMOUNT DESC
+""").to_pandas()
 st.subheader("カテゴリ別サマリー")
 st.dataframe(cat_df.rename(columns={
-    "CATEGORY":      "カテゴリ",
-    "TOTAL_AMOUNT":  "売上金額",
-    "TOTAL_QUANTITY":"販売数量",
-    "AVG_UNIT_PRICE":"平均単価",
+    "CATEGORY": "カテゴリ",
+    "TOTAL_AMOUNT": "売上金額",
+    "TOTAL_QUANTITY": "販売数量",
+    "AVG_UNIT_PRICE": "平均単価",
 }), use_container_width=True)

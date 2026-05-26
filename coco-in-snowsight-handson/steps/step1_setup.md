@@ -26,11 +26,10 @@
 3. 以下の内容を貼り付けて実行する
 
 ```sql
--- setup.sql の内容は以下から取得してください
--- https://github.com/snow-jp-handson-org/coco-cli-handson-jp/blob/main/setup.sql
+-- setup.sql の内容は本リポジトリの scripts/step1_setup.sql をコピーして貼り付けてください
 ```
 
-> GitHub から `setup.sql` の内容をコピーして貼り付けてください。  
+> `scripts/step1_setup.sql` の内容をコピーして貼り付けてください。  
 > ウェアハウス・データベース・スキーマ・テーブルが作成されます。
 
 ### 1-2. 実行確認

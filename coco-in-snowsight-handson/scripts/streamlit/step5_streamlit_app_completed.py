@@ -10,7 +10,7 @@ st.set_page_config(
 
 session = get_active_session()
 
-# ── サイドバー（チャネルフィルター）─────────────────────────────────────────
+# ── サイドバー（Step 8-2 で追加: チャネルフィルター）─────────────────────────
 with st.sidebar:
     st.header("フィルター")
     channel_options = ["全て", "EC", "RETAIL"]
@@ -52,11 +52,11 @@ mom_delta    = round((total_amount - prev_amount) / prev_amount * 100, 1) if pre
 col1, col2, col3 = st.columns(3)
 col1.metric("総売上（最新月）",   f"¥{total_amount:,.0f}", delta=f"{mom_delta:+.1f}% 前月比" if mom_delta else None)
 col2.metric("総販売数（最新月）", f"{total_qty:,} 個")
-col3.metric("集計対象月",         latest_month)
+col3.metric("集計対象月",        latest_month)
 
 st.divider()
 
-# ── カテゴリ別月次売上推移（折れ線グラフ）──────────────────────────────────
+# ── カテゴリ別月次売上推移（Step 8-2 で追加: 折れ線グラフ）──────────────────
 trend_df = session.sql(f"""
     SELECT
         DATE_TRUNC('MONTH', TRANSACTION_DATE) AS SALE_MONTH,
@@ -82,7 +82,7 @@ st.plotly_chart(fig_trend, use_container_width=True)
 
 st.divider()
 
-# ── 売上 Top10 商品（横棒グラフ）────────────────────────────────────────────
+# ── 売上 Top10 商品（Step 8-2 で追加: 横棒グラフ）──────────────────────────
 top10_df = session.sql(f"""
     SELECT
         PRODUCT_NAME,
@@ -90,7 +90,7 @@ top10_df = session.sql(f"""
     FROM SNOWRETAIL_DB.SNOWRETAIL_SCHEMA.MART_SALES
     WHERE TRANSACTION_DATE >= DATEADD('MONTH', -1,
           (SELECT MAX(TRANSACTION_DATE) FROM SNOWRETAIL_DB.SNOWRETAIL_SCHEMA.MART_SALES))
-    {channel_filter}
+          {channel_filter}
     GROUP BY PRODUCT_NAME
     ORDER BY TOTAL_AMOUNT DESC
     LIMIT 10
@@ -116,9 +116,9 @@ st.divider()
 cat_df = session.sql(f"""
     SELECT
         CATEGORY,
-        SUM(TOTAL_PRICE)                                       AS TOTAL_AMOUNT,
-        SUM(QUANTITY)                                          AS TOTAL_QUANTITY,
-        ROUND(SUM(TOTAL_PRICE) / NULLIF(SUM(QUANTITY), 0), 0) AS AVG_UNIT_PRICE
+        SUM(TOTAL_PRICE)                                              AS TOTAL_AMOUNT,
+        SUM(QUANTITY)                                            AS TOTAL_QUANTITY,
+        ROUND(SUM(TOTAL_PRICE) / NULLIF(SUM(QUANTITY), 0), 0)        AS AVG_UNIT_PRICE
     FROM SNOWRETAIL_DB.SNOWRETAIL_SCHEMA.MART_SALES
     WHERE 1=1 {channel_filter}
     GROUP BY CATEGORY
@@ -127,8 +127,8 @@ cat_df = session.sql(f"""
 
 st.subheader("カテゴリ別サマリー")
 st.dataframe(cat_df.rename(columns={
-    "CATEGORY":      "カテゴリ",
-    "TOTAL_AMOUNT":  "売上金額",
-    "TOTAL_QUANTITY":"販売数量",
-    "AVG_UNIT_PRICE":"平均単価",
+    "CATEGORY": "カテゴリ",
+    "TOTAL_AMOUNT": "売上金額",
+    "TOTAL_QUANTITY": "販売数量",
+    "AVG_UNIT_PRICE": "平均単価",
 }), use_container_width=True)

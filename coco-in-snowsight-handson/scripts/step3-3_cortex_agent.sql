@@ -1,16 +1,3 @@
--- ============================================================
--- 6-4_cortex_agent.sql
--- Cortex Agent の作成
--- 事前に以下が作成済みであること:
---   - MART_SALES (Dynamic Table)
---   - SNOWRETAIL_SV (Semantic View)
---   - HANDSON_DOCS_SEARCH (Cortex Search Service)
--- ============================================================
-
-USE ROLE ACCOUNTADMIN;
-USE WAREHOUSE COMPUTE_WH;
-USE SCHEMA SNOWRETAIL_DB.SNOWRETAIL_SCHEMA;
-
 CREATE OR REPLACE AGENT SNOWRETAIL_DB.SNOWRETAIL_SCHEMA.SNOWRETAIL_HANDSON_AGENT
 FROM SPECIFICATION $$
 {
@@ -48,7 +35,7 @@ FROM SPECIFICATION $$
       "execution_environment": {
         "query_timeout": 299,
         "type": "warehouse",
-        "warehouse": "COMPUTE_WH"
+        "warehouse": ""
       },
       "semantic_view": "SNOWRETAIL_DB.SNOWRETAIL_SCHEMA.SNOWRETAIL_SV"
     },
@@ -56,7 +43,7 @@ FROM SPECIFICATION $$
       "execution_environment": {
         "query_timeout": 299,
         "type": "warehouse",
-        "warehouse": "COMPUTE_WH"
+        "warehouse": ""
       },
       "search_service": "SNOWRETAIL_DB.SNOWRETAIL_SCHEMA.HANDSON_DOCS_SEARCH"
     }

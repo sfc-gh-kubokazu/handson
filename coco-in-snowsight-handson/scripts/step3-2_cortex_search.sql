@@ -1,11 +1,8 @@
--- ============================================================
--- 6-3_cortex_search.sql
--- Cortex Search Service の作成
--- ============================================================
-
-USE ROLE ACCOUNTADMIN;
-USE WAREHOUSE COMPUTE_WH;
-USE SCHEMA SNOWRETAIL_DB.SNOWRETAIL_SCHEMA;
+-- Cortex Search Service: HANDSON_DOCS_SEARCH
+-- Database : SNOWRETAIL_DB
+-- Schema   : SNOWRETAIL_SCHEMA
+-- Source   : SNOWRETAIL_DB.SNOWRETAIL_SCHEMA.SNOW_RETAIL_DOCUMENTS
+-- Created  : 2026-05-11
 
 CREATE OR REPLACE CORTEX SEARCH SERVICE SNOWRETAIL_DB.SNOWRETAIL_SCHEMA.HANDSON_DOCS_SEARCH
   ON CONTENT
