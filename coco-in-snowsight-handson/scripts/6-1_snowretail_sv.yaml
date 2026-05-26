@@ -1,0 +1,159 @@
+name: SNOWRETAIL_SV
+description: スノーリテール社の売上・顧客レビュー統合分析モデル。EC・店舗チャネルの売上トランザクション（MART_SALES）と商品レビュー（CUSTOMER_REVIEWS）を統合し、カテゴリ・ブランド・チャネル別の売上分析と顧客満足度分析を可能にする。
+tables:
+  - name: MART_SALES
+    description: ECチャネルと店舗チャネルを統合した売上マート。PRODUCT_MASTERの正規商品名・価格を使用し、商品名からBRAND・CATEGORYを導出。
+    base_table:
+      database: SNOWRETAIL_DB
+      schema: SNOWRETAIL_SCHEMA
+      table: MART_SALES
+    primary_key:
+      columns:
+        - TRANSACTION_ID
+    dimensions:
+      - name: TRANSACTION_ID
+        expr: TRANSACTION_ID
+        data_type: VARCHAR
+        description: 取引ID
+      - name: PRODUCT_ID
+        expr: PRODUCT_ID
+        data_type: VARCHAR
+        description: 商品ID
+      - name: PRODUCT_NAME
+        expr: PRODUCT_NAME
+        data_type: VARCHAR
+        description: 商品名（PRODUCT_MASTERの正規名称）
+      - name: BRAND
+        expr: BRAND
+        data_type: VARCHAR
+        description: ブランド名（商品名の先頭トークンから導出）
+      - name: CATEGORY
+        expr: CATEGORY
+        data_type: VARCHAR
+        description: 商品カテゴリ（テレビ、カメラ、食品など21カテゴリ）
+      - name: CHANNEL
+        expr: CHANNEL
+        data_type: VARCHAR
+        description: 販売チャネル（EC または RETAIL）
+    time_dimensions:
+      - name: TRANSACTION_DATE
+        expr: TRANSACTION_DATE
+        data_type: DATE
+        description: 取引日
+    facts:
+      - name: UNIT_PRICE
+        expr: UNIT_PRICE
+        data_type: NUMBER
+        description: 商品単価
+      - name: QUANTITY
+        expr: QUANTITY
+        data_type: NUMBER
+        description: 販売数量
+      - name: TOTAL_PRICE
+        expr: TOTAL_PRICE
+        data_type: NUMBER
+        description: 合計金額（UNIT_PRICE × QUANTITY）
+    measures:
+      - name: TOTAL_SALES
+        expr: SUM(TOTAL_PRICE)
+        data_type: NUMBER
+        description: 売上合計金額
+      - name: TOTAL_QUANTITY_SOLD
+        expr: SUM(QUANTITY)
+        data_type: NUMBER
+        description: 総販売数量
+      - name: TRANSACTION_COUNT
+        expr: COUNT(DISTINCT TRANSACTION_ID)
+        data_type: NUMBER
+        description: 取引件数
+      - name: AVG_UNIT_PRICE
+        expr: AVG(UNIT_PRICE)
+        data_type: NUMBER
+        description: 平均単価
+      - name: AVG_ORDER_VALUE
+        expr: AVG(TOTAL_PRICE)
+        data_type: NUMBER
+        description: 平均購買金額
+  - name: CUSTOMER_REVIEWS
+    description: 顧客レビューテーブル。商品に対する評価・レビューテキスト・購買チャネルを格納する。
+    base_table:
+      database: SNOWRETAIL_DB
+      schema: SNOWRETAIL_SCHEMA
+      table: CUSTOMER_REVIEWS
+    primary_key:
+      columns:
+        - REVIEW_ID
+    dimensions:
+      - name: REVIEW_ID
+        expr: REVIEW_ID
+        data_type: VARCHAR
+        description: レビューID
+      - name: PRODUCT_ID
+        expr: PRODUCT_ID
+        data_type: VARCHAR
+        description: 商品ID（MART_SALESのPRODUCT_IDと結合可能）
+      - name: CUSTOMER_ID
+        expr: CUSTOMER_ID
+        data_type: VARCHAR
+        description: 顧客ID
+      - name: REVIEW_TEXT
+        expr: REVIEW_TEXT
+        data_type: VARCHAR
+        description: レビューテキスト
+      - name: PURCHASE_CHANNEL
+        expr: PURCHASE_CHANNEL
+        data_type: VARCHAR
+        description: 購買チャネル（店舗、ECなど）
+    time_dimensions:
+      - name: REVIEW_DATE
+        expr: REVIEW_DATE
+        data_type: TIMESTAMP_NTZ
+        description: レビュー投稿日時
+    facts:
+      - name: RATING
+        expr: RATING
+        data_type: NUMBER
+        description: 評価スコア（1〜5）
+      - name: HELPFUL_VOTES
+        expr: HELPFUL_VOTES
+        data_type: NUMBER
+        description: 参考になった数
+    measures:
+      - name: AVG_RATING
+        expr: AVG(RATING)
+        data_type: NUMBER
+        description: 平均評価スコア
+      - name: REVIEW_COUNT
+        expr: COUNT(DISTINCT REVIEW_ID)
+        data_type: NUMBER
+        description: レビュー件数
+      - name: TOTAL_HELPFUL_VOTES
+        expr: SUM(HELPFUL_VOTES)
+        data_type: NUMBER
+        description: 合計参考になった数
+verified_queries:
+  - name: category_channel_sales
+    question: カテゴリとチャネル別の売上金額と販売数量はどうなっていますか？
+    sql: SELECT CATEGORY, CHANNEL, SUM(TOTAL_PRICE) AS TOTAL_SALES, SUM(QUANTITY) AS TOTAL_QUANTITY FROM mart_sales GROUP BY CATEGORY, CHANNEL ORDER BY TOTAL_SALES DESC
+    verified_at: 1778457548
+    verified_by: Semantic Model Generator
+  - name: monthly_sales_trend
+    question: 月別の売上推移はどのようになっていますか？
+    sql: SELECT DATE_TRUNC('MONTH', TRANSACTION_DATE) AS SALES_MONTH, SUM(TOTAL_PRICE) AS MONTHLY_SALES, COUNT(DISTINCT TRANSACTION_ID) AS TRANSACTION_COUNT FROM mart_sales GROUP BY SALES_MONTH ORDER BY SALES_MONTH
+    verified_at: 1778457548
+    verified_by: Semantic Model Generator
+  - name: top10_products_by_sales
+    question: 売上金額上位10商品は何ですか？
+    sql: SELECT PRODUCT_ID, PRODUCT_NAME, BRAND, CATEGORY, SUM(TOTAL_PRICE) AS TOTAL_SALES FROM mart_sales GROUP BY PRODUCT_ID, PRODUCT_NAME, BRAND, CATEGORY ORDER BY TOTAL_SALES DESC LIMIT 10
+    verified_at: 1778457548
+    verified_by: Semantic Model Generator
+  - name: category_avg_rating
+    question: カテゴリ別の平均評価とレビュー数はどうなっていますか？
+    sql: SELECT m.CATEGORY, AVG(r.RATING) AS AVG_RATING, COUNT(r.REVIEW_ID) AS REVIEW_COUNT FROM customer_reviews AS r JOIN mart_sales AS m ON r.PRODUCT_ID = m.PRODUCT_ID GROUP BY m.CATEGORY ORDER BY AVG_RATING DESC
+    verified_at: 1778457548
+    verified_by: Semantic Model Generator
+  - name: channel_sales_summary
+    question: ECと店舗それぞれの売上合計・取引件数・平均購買額は？
+    sql: SELECT CHANNEL, SUM(TOTAL_PRICE) AS TOTAL_SALES, COUNT(DISTINCT TRANSACTION_ID) AS TRANSACTION_COUNT, AVG(TOTAL_PRICE) AS AVG_ORDER_VALUE FROM mart_sales GROUP BY CHANNEL
+    verified_at: 1778457548
+    verified_by: Semantic Model Generator
