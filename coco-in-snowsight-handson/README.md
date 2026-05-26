@@ -1,22 +1,12 @@
-# Cortex Code CLI ハンズオン
-
-**日時:** 2026-05-28 (水) 13:00-15:00  
-**参加者:** 顧客 7名 + パートナー 数名（未確定）  
-**AE:** 八重樫 Ryu  
-**SE:** 久保 Kazutaka（ファシリテーター）
-
-## コンテンツ参照先
-
-- **スライド:** https://docs.google.com/presentation/d/1vuUIEdqcQFvzKpOWpl4zFNKHDPF8XWsfiY4UVThRp7U
-- **GitHub:** https://github.com/snow-jp-handson-org/coco-cli-handson-jp
+# Cortex Code in Snowsight ハンズオン
 
 ## フォルダ構成
 
 ```
-coco-cli-handson-20260528/
+coco-in-snowsight-handson/
 ├── README.md          # 本ファイル
 ├── agenda.md          # 当日アジェンダ
-├── discussion.md      # 設計ディスカッションまとめ
+├── docs/              # 実施情報・ディスカッションメモ（.gitignore対象）
 └── steps/             # ステップ別手順書
     ├── step0-1_setup.md
     ├── step3_agents_md.md
@@ -28,5 +18,5 @@ coco-cli-handson-20260528/
 ## 当日のゴール
 
 1. Snowflake でアプリ・AI が動くことを体験してもらう
-2. CoCo CLI の基本操作を習得してもらう
+2. Cortex Code in Snowsight の基本操作を習得してもらう
 3. 業務活用のイメージを掴んでもらう
