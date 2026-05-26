@@ -1,4 +1,4 @@
-# Step 3: AGENTS.md — ソフトガバナンス体験
+# Step 2: AGENTS.md — ソフトガバナンス体験
 
 **所要時間:** 15分  
 **目的:** AGENTS.md をWorkspaceに配置することで、Cortex Code の応答を制御できることを体験する。

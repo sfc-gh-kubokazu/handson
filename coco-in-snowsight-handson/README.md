@@ -8,11 +8,11 @@ coco-in-snowsight-handson/
 ├── agenda.md          # 当日アジェンダ
 ├── docs/              # 実施情報・ディスカッションメモ（.gitignore対象）
 └── steps/             # ステップ別手順書
-    ├── step0-1_setup.md
-    ├── step3_agents_md.md
-    ├── step6_semantic_agent.md
-    ├── step7_skills.md
-    └── step8_streamlit.md
+    ├── step1_setup.md
+    ├── step2_agents_md.md
+    ├── step3_semantic_agent.md
+    ├── step4_skills.md
+    └── step5_streamlit.md
 ```
 
 ## 当日のゴール

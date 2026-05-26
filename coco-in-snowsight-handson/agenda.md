@@ -11,11 +11,11 @@
 | 時間 | 分 | 内容 | 担当 |
 |------|----|------|------|
 | 13:00-13:10 | 10分 | オープニング / Snowflake・Cortex Code概要デモ | AE / SE |
-| 13:10-13:30 | 20分 | **Step 0-1:** Workspace作成・setup.sql実行・データ探索 | 全員 |
-| 13:30-13:45 | 15分 | **Step 3:** AGENTS.md でガバナンス体験 | 全員 |
-| 13:45-14:15 | 30分 | **Step 6:** Semantic View / Cortex Search / Cortex Agent | 全員 |
-| 14:15-14:35 | 20分 | **Step 7:** Personal Skills 作成・呼び出し | 全員 |
-| 14:35-14:50 | 15分 | **Step 8:** Streamlit アプリ生成・デプロイ | 全員 |
+| 13:10-13:30 | 20分 | **Step 1:** Workspace作成・setup.sql実行・データ探索 | 全員 |
+| 13:30-13:45 | 15分 | **Step 2:** AGENTS.md でガバナンス体験 | 全員 |
+| 13:45-14:15 | 30分 | **Step 3:** Semantic View / Cortex Search / Cortex Agent | 全員 |
+| 14:15-14:35 | 20分 | **Step 4:** Personal Skills 作成・呼び出し | 全員 |
+| 14:35-14:50 | 15分 | **Step 5:** Streamlit アプリ生成・デプロイ | 全員 |
 | 14:50-15:00 | 10分 | まとめ・Q&A・ネクストステップ紹介 | AE / SE |
 
 ---
@@ -41,15 +41,15 @@
 ### ハンズオンアーキテクチャ
 
 ```
-[Step 0-1] データ準備・探索
+[Step 1] データ準備・探索
     ↓
-[Step 3] AGENTS.md（AIへの指示書でガバナンス）
+[Step 2] AGENTS.md（AIへの指示書でガバナンス）
     ↓
-[Step 6] Semantic View → Cortex Search → Cortex Agent
+[Step 3] Semantic View → Cortex Search → Cortex Agent
     ↓
-[Step 7] カスタムスキルで定型業務を自動化
+[Step 4] カスタムスキルで定型業務を自動化
     ↓
-[Step 8] Streamlit ダッシュボードで可視化・配布
+[Step 5] Streamlit ダッシュボードで可視化・配布
 ```
 
 ---
@@ -72,7 +72,7 @@
 - [ ] 参加者へ事前準備メール送付（トライアルアカウント作成手順）
 - [ ] setup.sql の動作確認（トライアルアカウントで実行テスト）
 - [ ] AGENTS.md サンプルの準備
-- [ ] Step 7 用スキルファイルの準備
+- [ ] Step 4 用スキルファイルの準備
 - [ ] Zoom URL 参加者に送付済み確認
 
 ### 当日
@@ -84,6 +84,4 @@
 
 ## コンテンツ参照先
 
-- **スライド:** https://docs.google.com/presentation/d/1vuUIEdqcQFvzKpOWpl4zFNKHDPF8XWsfiY4UVThRp7U
-- **GitHub（オリジナル）:** https://github.com/snow-jp-handson-org/coco-cli-handson-jp
 - **公式ドキュメント:** https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight

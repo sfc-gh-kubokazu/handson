@@ -1,4 +1,4 @@
-# Step 8: Streamlit in Snowflake — ダッシュボード生成
+# Step 5: Streamlit in Snowflake — ダッシュボード生成
 
 **所要時間:** 15分  
 **目的:** Cortex Code を使って Streamlit アプリを生成・デプロイし、ビジュアルダッシュボードを作る体験をする。

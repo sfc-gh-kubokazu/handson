@@ -1,4 +1,4 @@
-# Step 0-1: Workspace作成・データ準備・データ探索
+# Step 1: Workspace作成・データ準備・データ探索
 
 **所要時間:** 20分  
 **目的:** Snowsight Workspace を作成し、ハンズオン用データを準備する。Cortex Code との最初の対話を体験する。

@@ -1,4 +1,4 @@
-# Step 7: Personal Skills — カスタムスキルの作成
+# Step 4: Personal Skills — カスタムスキルの作成
 
 **所要時間:** 20分  
 **目的:** Workspace にカスタムスキルを作成し、定型業務を `/` コマンドで呼び出せることを体験する。
