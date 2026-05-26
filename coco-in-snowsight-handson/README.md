@@ -5,8 +5,10 @@
 ```
 coco-in-snowsight-handson/
 ├── README.md          # 本ファイル
-├── agenda.md          # 当日アジェンダ
+├── scenario.md        # ハンズオンの全体像・シナリオ・ストーリー
+├── agenda.md          # 当日アジェンダ（タイムテーブル・準備物）
 ├── docs/              # 実施情報・ディスカッションメモ（.gitignore対象）
+├── images/            # スクリーンショット・図版置き場
 ├── steps/             # ステップ別手順書
 │   ├── step1_setup.md
 │   ├── step2_agents_md.md
