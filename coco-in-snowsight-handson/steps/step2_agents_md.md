@@ -41,7 +41,7 @@
 
 ## プロジェクト概要
 株式会社スノーリテールの売上データを分析するエージェントです。
-対象データベース: SNOW_RETAIL_DB.SNOW_RETAIL_SCHEMA
+対象データベース: SNOWRETAIL_DB.SNOWRETAIL_SCHEMA
 
 ## ビジネス定義
 - **売上金額**: RETAIL_DATA.TOTAL_AMOUNT + EC_DATA.TOTAL_AMOUNT の合算
@@ -50,7 +50,7 @@
 - **期間**: 特に指定がなければ直近3ヶ月
 
 ## SQL 規約
-- 必ず SNOW_RETAIL_DB.SNOW_RETAIL_SCHEMA を明示的に指定すること
+- 必ず SNOWRETAIL_DB.SNOWRETAIL_SCHEMA を明示的に指定すること
 - GROUP BY には列名（エイリアス不可）を使用すること
 - 売上分析には RETAIL_DATA と EC_DATA の両方を含めること
 

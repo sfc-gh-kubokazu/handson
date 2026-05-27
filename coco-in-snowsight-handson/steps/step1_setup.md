@@ -37,8 +37,8 @@
 SQL を全選択 → **Run** ボタンで実行。  
 以下のオブジェクトが作成されていることを確認:
 
-- Database: `SNOW_RETAIL_DB`
-- Schema: `SNOW_RETAIL_SCHEMA`
+- Database: `SNOWRETAIL_DB`
+- Schema: `SNOWRETAIL_SCHEMA`
 - Tables: `RETAIL_DATA`, `EC_DATA`, `PRODUCT_MASTER`, `SNOW_RETAIL_DOCUMENTS`, `CUSTOMER_REVIEWS`
 
 ---
@@ -49,7 +49,7 @@ SQL を全選択 → **Run** ボタンで実行。
 2. 以下のプロンプトを入力して送信:
 
 ```
-SNOW_RETAIL_DB.SNOW_RETAIL_SCHEMA にどんなテーブルがあるか教えて。
+SNOWRETAIL_DB.SNOWRETAIL_SCHEMA にどんなテーブルがあるか教えて。
 各テーブルの概要とレコード数を調べて。
 ```
 
