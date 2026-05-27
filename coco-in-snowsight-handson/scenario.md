@@ -15,6 +15,8 @@
 
 ## 想定企業：株式会社スノーリテール
 
+![想定企業](./images/company-overview.png)
+
 > 首都圏で **150店舗** を展開するリテール企業。EC事業も急成長中。
 
 ### 抱えている課題
@@ -27,6 +29,8 @@
 | 4 | ダッシュボード作成・配布の手間が大きい | 現場に届くまでが遅い |
 
 ### 本日のミッション
+
+![本日のミッション](./images/mission.png)
 
 > あなたは**スノーリテールのデータ分析担当者**。Cortex Code in Snowsight を使って、
 > これらの課題を **2時間で一気通貫に解決する PoC** を作る。
@@ -62,6 +66,9 @@
 - **Cortex Code** に「どんなテーブルがある？」と日本語で聞くだけ → AIがSQLを自動生成・実行・要約
 
 #### 🛠 ここで使う機能：**Cortex Code**
+
+![Cortex Code in Snowsight](./images/cortex-code-in-snowsight.png)
+
 > Snowflake が公式提供する **AI コーディングアシスタント**。Snowsight ブラウザの中で動き、
 > インストール不要・追加ライセンス不要。Snowflake のメタデータを理解しているので、
 > 「このテーブルの中身を要約して」「売上トップ5を出して」のような自然言語指示でSQLを生成・実行してくれる。
@@ -88,6 +95,9 @@
 **Cortex Code が以降の全会話で自動的にそれを参照する** ようになります。
 
 #### 🛠 ここで使う機能：**AGENTS.md**
+
+![AGENTS.md](./images/agents-md.png)
+
 > Cortex Code への **永続的な指示書**。Workspace のルートに置く Markdown ファイルで、以下を定義できる：
 > - **ビジネス定義:** 「売上 = RETAIL + EC の合算」「直近期間 = 過去3ヶ月」など
 > - **SQL 規約:** 「必ずDB.SCHEMAを明示」「GROUP BY は列名で」など
@@ -129,21 +139,38 @@
 #### 🛠 ここで使う機能
 
 **Cortex Analyst（Semantic View）**
+
+![Cortex Analyst 概要](./images/cortex-analyst-overview.png)
+![Cortex Analyst の仕組み](./images/cortex-analyst-architecture.png)
+![Snowflake セマンティックビュー](./images/semantic-view.png)
+
 > テーブル列に "ビジネスの意味" を付与する仕組み。「TOTAL_AMOUNT は売上金額」「CATEGORY は商品カテゴリ」のように
 > メトリクス・ディメンションを定義しておくと、**自然言語の質問が正しいSQLに翻訳** される。
 > "Text-to-SQL の精度問題" を Semantic View が解消する。
 
 **Cortex Search**
+
+![Cortex Search](./images/cortex-search.png)
+![Cortex Search によるデータ検索](./images/cortex-search-flow.png)
+
 > Snowflake 上で動く **ハイブリッド検索（セマンティック + キーワード）** サービス。
 > ベクトルDBを別途立てる必要なし。テーブルの列を指定するだけで、その内容を意味検索できる。
 > 「返品ポリシーについて」のような質問で関連ドキュメントを引いてくる。
 
 **Cortex Agent**
+
+![Cortex Agents API](./images/cortex-agents-api.png)
+![エージェントオーケストレーション](./images/cortex-agents-orchestration.png)
+
 > Semantic View（数値）と Cortex Search（テキスト）を **ツールとして組み合わせた AI エージェント**。
 > 質問に応じて自分でツールを選び、組み合わせて回答する。
 > "RAG + Text-to-SQL を統合した AI アプリ" を **コードゼロ** で作れる。
 
 **Snowflake Intelligence（参考）**
+
+![Snowflake Intelligence](./images/snowflake-intelligence.png)
+![Snowflake Intelligence の仕組み](./images/snowflake-intelligence-architecture.png)
+
 > Cortex Agent をエンドユーザー向けに公開する **対話型UI**。
 > ビジネス部門の人が ChatGPT のようなチャット画面で、自社データに直接質問できる世界が標準で手に入る。
 
@@ -170,6 +197,9 @@
 **Personal Skill** にこの手順を登録すれば、`/monthly-report` と打つだけで誰でも実行できます。
 
 #### 🛠 ここで使う機能：**Skills（Personal Skills）**
+
+![Skills](./images/skills.png)
+
 > Cortex Code の **再利用可能なスキルファイル**（Markdown）。Workspace の `.snowflake/cortex/skills/` に置く。
 > - スキルには「手順」「使うデータソース」「出力フォーマット」を記述
 > - 必要なら参照SQLや出力テンプレートも一緒にバンドル可能
@@ -196,6 +226,9 @@
 **Streamlit in Snowflake (SiS)** で、**Snowflake内で動くWebアプリ** をデプロイ。
 
 #### 🛠 ここで使う機能：**Streamlit in Snowflake**
+
+![Streamlit in Snowflake](./images/streamlit-in-snowflake.png)
+
 > Python で書ける Web アプリフレームワーク **Streamlit** を、**Snowflake の中でホスト** できる機能。
 > - **データを動かさない:** アプリがデータの隣で動くので ETL も不要、レイテンシも最小
 > - **権限はRBACそのまま:** Snowflake のロール/権限がそのままアプリの権限になる（追加のID管理不要）
