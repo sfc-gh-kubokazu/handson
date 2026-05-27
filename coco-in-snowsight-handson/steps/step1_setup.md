@@ -40,6 +40,7 @@ SQL を全選択 → **Run** ボタンで実行。
 - Database: `SNOWRETAIL_DB`
 - Schema: `SNOWRETAIL_SCHEMA`
 - Tables: `RETAIL_DATA`, `EC_DATA`, `PRODUCT_MASTER`, `SNOW_RETAIL_DOCUMENTS`, `CUSTOMER_REVIEWS`
+- Dynamic Table: `MART_SALES`（EC + 実店舗を統合した分析用テーブル。Step 3以降で使用）
 
 ---
 
