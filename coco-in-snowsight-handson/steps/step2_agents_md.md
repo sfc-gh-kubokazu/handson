@@ -44,7 +44,7 @@
 対象データベース: SNOWRETAIL_DB.SNOWRETAIL_SCHEMA
 
 ## ビジネス定義
-- **売上金額**: RETAIL_DATA.TOTAL_AMOUNT + EC_DATA.TOTAL_AMOUNT の合算
+- **売上金額**: RETAIL_DATA.TOTAL_PRICE + EC_DATA.TOTAL_PRICE の合算
 - **売上数量**: RETAIL_DATA.QUANTITY + EC_DATA.QUANTITY の合算
 - **チャネル**: 「実店舗」= RETAIL_DATA、「EC」= EC_DATA
 - **期間**: 特に指定がなければ直近3ヶ月

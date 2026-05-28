@@ -85,7 +85,7 @@
 
 #### こんな場面、ありませんか？
 あなたが「売上を計算して」とAIに頼むと、こんな答えが返ってきました。
-> 「`RETAIL_DATA.TOTAL_AMOUNT` の合計を計算しました。」
+> 「`RETAIL_DATA.TOTAL_PRICE` の合計を計算しました。」
 
 …ECが含まれていません。隣のチームメンバーが同じ質問をすると、別の解釈で別の数字が返ってくる。
 **「結局どっちが正しいの？」「うちの会社で "売上" って何を指す？」** 毎回説明し直すことに。
@@ -144,7 +144,7 @@
 ![Cortex Analyst の仕組み](./images/cortex-analyst-architecture.png)
 ![Snowflake セマンティックビュー](./images/semantic-view.png)
 
-> テーブル列に "ビジネスの意味" を付与する仕組み。「TOTAL_AMOUNT は売上金額」「CATEGORY は商品カテゴリ」のように
+> テーブル列に "ビジネスの意味" を付与する仕組み。「TOTAL_PRICE は売上金額」「CATEGORY は商品カテゴリ」のように
 > メトリクス・ディメンションを定義しておくと、**自然言語の質問が正しいSQLに翻訳** される。
 > "Text-to-SQL の精度問題" を Semantic View が解消する。
 
