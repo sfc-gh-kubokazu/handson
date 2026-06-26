@@ -1,0 +1,77 @@
+-- =============================================================
+-- STEP 4: クエリ・結果キャッシュ・テーブルクローン
+-- 対応手順書: ../steps/04_analytics.md
+-- =============================================================
+-- このファイルでは以下を実施します:
+--   1. 基本的なクエリ実行
+--   2. 結果キャッシュの体験
+--   3. テーブルのクローン作成
+-- =============================================================
+
+USE ROLE sysadmin;
+USE WAREHOUSE analytics_wh;
+USE DATABASE citibike;
+USE SCHEMA public;
+
+-- =============================================================
+-- 1. 基本クエリの実行
+-- =============================================================
+
+-- 全件確認（先頭20件）
+SELECT * FROM trips LIMIT 20;
+
+-- 時間帯別トリップ数と平均乗車時間を集計
+-- date_trunc: タイムスタンプを「時」単位に切り捨てる関数
+SELECT
+    date_trunc('hour', starttime) AS "date",
+    COUNT(*) AS "num trips",
+    AVG(tripduration) / 60 AS "avg duration (mins)",
+    AVG(haversine(start_station_latitude, start_station_longitude,
+                  end_station_latitude, end_station_longitude)) AS "avg distance (km)"
+FROM trips
+GROUP BY 1
+ORDER BY 1;
+
+-- =============================================================
+-- 2. 結果キャッシュの確認
+-- =============================================================
+
+-- ⚠️ ポイント: まったく同じクエリをもう一度実行する
+-- Snowflakeは前回の結果をキャッシュしているので、ウェアハウスを起動せずに即返却する
+-- クエリ履歴で「Result Reuse」と表示されることを確認してください
+SELECT
+    date_trunc('hour', starttime) AS "date",
+    COUNT(*) AS "num trips",
+    AVG(tripduration) / 60 AS "avg duration (mins)",
+    AVG(haversine(start_station_latitude, start_station_longitude,
+                  end_station_latitude, end_station_longitude)) AS "avg distance (km)"
+FROM trips
+GROUP BY 1
+ORDER BY 1;
+
+-- =============================================================
+-- 3. 別のクエリ: 月別トリップ数
+-- =============================================================
+
+-- 月名別にトリップ数を集計
+SELECT
+    monthname(starttime) AS "month",
+    COUNT(*) AS "num trips"
+FROM trips
+GROUP BY 1
+ORDER BY 2 DESC;
+
+-- =============================================================
+-- 4. テーブルのクローン（ゼロコピークローン）
+-- =============================================================
+
+-- ⚠️ ポイント: クローン作成はほぼ瞬時に完了します
+-- Snowflakeはデータをコピーせず、メタデータのみを複製します（ゼロコピー）
+-- 変更が加わって初めてストレージコストが発生します
+CREATE TABLE trips_dev CLONE trips;
+
+-- クローンが正常に作成されたか確認
+SELECT COUNT(*) AS cloned_trips FROM trips_dev;
+
+-- クローンでデータを変更しても元テーブルには影響しません
+-- （開発環境での検証に活用できます）
