@@ -78,6 +78,8 @@ SELECT COUNT(*) FROM citibike.public.trips;
 USE ROLE accountadmin;
 
 -- 自分に付与されているロール一覧
+-- ⚠️ YOUR_USERNAME_GOES_HERE は自分のユーザー名に置き換えてください
+--    （ユーザー名が不明な場合: SELECT CURRENT_USER();）
 SHOW GRANTS TO USER YOUR_USERNAME_GOES_HERE;
 
 -- ロールに付与されている権限一覧
