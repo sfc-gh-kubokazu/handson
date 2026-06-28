@@ -64,7 +64,7 @@ ORDER BY 2 DESC;
 -- ⚠️ ポイント: クローン作成はほぼ瞬時に完了します
 -- Snowflakeはデータをコピーせず、メタデータのみを複製します（ゼロコピー）
 -- 変更が加わって初めてストレージコストが発生します
-CREATE TABLE trips_dev CLONE trips;
+CREATE OR REPLACE TABLE trips_dev CLONE trips;
 
 -- クローンが正常に作成されたか確認
 SELECT COUNT(*) AS cloned_trips FROM trips_dev;

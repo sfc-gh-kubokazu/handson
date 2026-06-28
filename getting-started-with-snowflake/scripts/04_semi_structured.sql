@@ -17,8 +17,8 @@ USE WAREHOUSE analytics_wh;
 -- 1. 天気データ用のデータベースとテーブルを作成
 -- =============================================================
 
--- 新しいデータベースを作成
-CREATE DATABASE weather;
+-- 新しいデータベースを作成（既存の場合は置き換え）
+CREATE OR REPLACE DATABASE weather;
 
 USE ROLE sysadmin;
 USE WAREHOUSE analytics_wh;
@@ -28,14 +28,14 @@ USE SCHEMA public;
 -- VARIANT 型のテーブルを作成
 -- ⚠️ ポイント: VARIANT はJSON/XML/Avroなど半構造化データをそのまま格納できる型
 -- スキーマを事前定義しなくてよいのが特徴（スキーマオンリード）
-CREATE TABLE json_weather_data (v VARIANT);
+CREATE OR REPLACE TABLE json_weather_data (v VARIANT);
 
 -- =============================================================
 -- 2. 外部ステージの作成と JSON データのロード
 -- =============================================================
 
 -- S3 上の気象データへのステージを作成
-CREATE STAGE nyc_weather
+CREATE OR REPLACE STAGE nyc_weather
     URL = 's3://snowflake-workshop-lab/zero-weather-nyc';
 
 -- ステージ内のファイルを確認
