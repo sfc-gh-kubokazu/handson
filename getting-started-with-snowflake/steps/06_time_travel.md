@@ -109,4 +109,4 @@ A: `CREATE OR REPLACE TABLE trips AS (SELECT * FROM trips BEFORE ...)` の
 - [ ] `json_weather_data` を DROP して UNDROP で復元できた
 - [ ] `trips` テーブルの全行を誤 UPDATE できた（意図的な誤操作）
 - [ ] タイムトラベルで UPDATE 前の状態に戻せた
-- [ ] 復元後の `start_station_name` が正常な駅名になっている
+- [ ] 復元後の `membership_type` が正常な会員種別に戻っている

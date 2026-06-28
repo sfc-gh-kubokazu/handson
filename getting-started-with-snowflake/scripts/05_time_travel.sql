@@ -39,12 +39,12 @@ USE DATABASE citibike;
 USE SCHEMA public;
 
 -- ---- 誤操作をシミュレーション ----
--- 全行の出発駅名を "oops" に上書きしてしまう（WHERE句を忘れた！）
-UPDATE trips SET start_station_name = 'oops';
+-- 全行の会員種別を "oops" に上書きしてしまう（WHERE句を忘れた！）
+UPDATE trips SET membership_type = 'oops';
 
 -- 被害を確認（全行が "oops" になっている）
 SELECT
-    start_station_name AS station,
+    membership_type AS membership,
     COUNT(*) AS rides
 FROM trips
 GROUP BY 1
@@ -72,9 +72,9 @@ CREATE OR REPLACE TABLE trips AS
     SELECT * FROM trips BEFORE (STATEMENT => $query_id)
 );
 
--- 復元できたか確認（駅名が元に戻っている）
+-- 復元できたか確認（会員種別が元に戻っている）
 SELECT
-    start_station_name AS station,
+    membership_type AS membership,
     COUNT(*) AS rides
 FROM trips
 GROUP BY 1

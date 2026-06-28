@@ -25,24 +25,24 @@ USE DATABASE citibike;
 USE SCHEMA public;
 
 -- Citibike のトリップデータを格納するテーブルを作成
--- ⚠️ 注意: 列の型はソースデータに合わせて定義しています
+-- ⚠️ 注意: 列の型はソースCSVの実際の構造に合わせて定義しています
 CREATE OR REPLACE TABLE trips (
-    tripduration        INTEGER,         -- 乗車時間（秒）
+    trip_id             INTEGER,         -- トリップID
     starttime           TIMESTAMP,       -- 乗車開始日時
     stoptime            TIMESTAMP,       -- 乗車終了日時
+    tripduration        INTEGER,         -- 乗車時間（分）
     start_station_id    INTEGER,         -- 出発駅ID
-    start_station_name  STRING,          -- 出発駅名
-    start_station_latitude  FLOAT,       -- 出発駅の緯度
-    start_station_longitude FLOAT,       -- 出発駅の経度
     end_station_id      INTEGER,         -- 到着駅ID
-    end_station_name    STRING,          -- 到着駅名
-    end_station_latitude    FLOAT,       -- 到着駅の緯度
-    end_station_longitude   FLOAT,       -- 到着駅の経度
-    bikeid              INTEGER,         -- 自転車ID
-    membership_type     STRING,          -- 会員種別
-    usertype            STRING,          -- ユーザー種別（Subscriber/Customer）
-    birth_year          INTEGER,         -- 生年
-    gender              INTEGER          -- 性別（0=不明, 1=男性, 2=女性）
+    bikeid              STRING,          -- 自転車ID（YYYY-NNN形式）
+    biketype            STRING,          -- 自転車タイプ（classic/ebike）
+    rider_id            INTEGER,         -- ライダーID
+    rider_name          STRING,          -- ライダー名
+    birth_date          DATE,            -- 生年月日
+    gender              STRING,          -- 性別（male/female/not specified）
+    membership_type     STRING,          -- 会員種別（annual member/single ride等）
+    payment_method      STRING,          -- 支払方法（phone/ccard）
+    payment_detail      STRING,          -- 支払詳細（iphone/android/visa等）
+    extra               STRING           -- 予備列
 );
 
 -- テーブルが作成されたか確認

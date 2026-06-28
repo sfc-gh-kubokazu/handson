@@ -25,9 +25,7 @@ SELECT * FROM trips LIMIT 20;
 SELECT
     date_trunc('hour', starttime) AS "date",
     COUNT(*) AS "num trips",
-    AVG(tripduration) / 60 AS "avg duration (mins)",
-    AVG(haversine(start_station_latitude, start_station_longitude,
-                  end_station_latitude, end_station_longitude)) AS "avg distance (km)"
+    AVG(tripduration) AS "avg duration (mins)"
 FROM trips
 GROUP BY 1
 ORDER BY 1;
@@ -42,9 +40,7 @@ ORDER BY 1;
 SELECT
     date_trunc('hour', starttime) AS "date",
     COUNT(*) AS "num trips",
-    AVG(tripduration) / 60 AS "avg duration (mins)",
-    AVG(haversine(start_station_latitude, start_station_longitude,
-                  end_station_latitude, end_station_longitude)) AS "avg distance (km)"
+    AVG(tripduration) AS "avg duration (mins)"
 FROM trips
 GROUP BY 1
 ORDER BY 1;
