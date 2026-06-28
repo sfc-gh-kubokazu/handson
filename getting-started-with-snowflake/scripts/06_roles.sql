@@ -82,6 +82,12 @@ USE ROLE accountadmin;
 --    （ユーザー名が不明な場合: SELECT CURRENT_USER();）
 SHOW GRANTS TO USER YOUR_USERNAME_GOES_HERE;
 
+-- ユーザー名がわからない場合は、こちらの匿名ブロックで動的に確認できます
+-- BEGIN
+--     LET stmt := 'SHOW GRANTS TO USER ' || CURRENT_USER();
+--     EXECUTE IMMEDIATE stmt;
+-- END;
+
 -- ロールに付与されている権限一覧
 SHOW GRANTS TO ROLE junior_dba;
 
