@@ -26,10 +26,13 @@ CREATE TABLE json_weather_data (v VARIANT);
 
 **アクセス方法**（コロン記法）:
 ```sql
--- JSON: {"city": {"name": "New York", "coord": {"lat": 40.7}}}
-v:city:name::STRING        -- "New York"（STRINGにキャスト）
-v:city:coord:lat::FLOAT    -- 40.7
-v:weather[0]:main::STRING  -- 配列の先頭要素
+-- このデータは観測所ごとのフラットなJSON:
+-- {"name":"John F. Kennedy Airport", "region":"NY", "temp":26.7, "weatherCondition":"Fair"}
+v:name::STRING            -- "John F. Kennedy Airport"
+v:region::STRING          -- "NY"（州）
+v:temp::FLOAT             -- 26.7（摂氏で格納済み）
+v:weatherCondition::STRING -- "Fair"
+v:obsTime::TIMESTAMP      -- 観測日時
 ```
 
 ### ビュー（View）
@@ -39,10 +42,12 @@ JSON のパース処理をビューに隠蔽すると、利用者は通常のテ
 ```sql
 CREATE OR REPLACE VIEW json_weather_data_view AS
 SELECT
-    v:time::TIMESTAMP AS observation_time,
-    v:weather[0]:main::STRING AS weather_conditions
+    v:obsTime::TIMESTAMP AS observation_time,
+    v:station::STRING AS station_id,
+    v:weatherCondition::STRING AS weather_conditions
     ...
-FROM json_weather_data;
+FROM json_weather_data
+WHERE v:region::STRING = 'NY';
 ```
 
 これにより:
@@ -57,9 +62,14 @@ Snowflake では同一アカウント内であれば、
 
 ```sql
 FROM citibike.public.trips AS t   -- データベース: citibike
-LEFT JOIN weather.public.json_weather_data_view AS w  -- データベース: weather
-    ON date_trunc('hour', t.starttime) = w.observation_time
+JOIN nyc_weather_2018 AS w        -- weather DB のビューを月日時で集約
+    ON MONTH(t.starttime) = w.m
+   AND DAY(t.starttime)   = w.d
+   AND HOUR(t.starttime)  = w.h
 ```
+
+> ⚠️ 本ハンズオンのデータは trips が 2020-2024年、weather が 2016-2019年で**年が重ならない**ため、
+> 「同じ月・日・時刻」で対応付けています（weather は JFK空港 2018年を代表使用）。
 
 書式: `<データベース>.<スキーマ>.<テーブル名>`
 
@@ -87,16 +97,17 @@ LEFT JOIN weather.public.json_weather_data_view AS w  -- データベース: wea
 
 ## よくある質問
 
-**Q: `v:city:id` の値が NULL になる**  
+**Q: `v:region` などの値が NULL になる**  
 A: JSON のキーは大文字小文字を区別します。  
-`SELECT * FROM json_weather_data LIMIT 1;` で実際のキー名を確認してください。
+`SELECT v FROM json_weather_data LIMIT 1;` で実際のキー名を確認してください。  
+（このデータは `v:city:id` のようなネスト構造ではなく、`v:name` / `v:region` / `v:temp` などのフラット構造です）
 
-**Q: JOIN の結果が少ない / NULL が多い**  
-A: Citi Bike データは 2013〜2018 年、気象データは 2016〜2019 年です。  
-期間が重なる部分でのみ JOIN できます（`date_trunc` による時間の粒度も確認）。
+**Q: JOIN の結果が出ない / 少ない**  
+A: trips は 2020-2024年、weather は 2016-2019年で**年が重なりません**。  
+そのため絶対時刻ではなく「月・日・時刻」で対応付けています（スクリプト参照）。
 
-**Q: 気温がマイナスの大きな値になる**  
-A: JSON の気温はケルビン（K）単位です。摂氏に変換: `temp_kelvin - 273.15`
+**Q: 気温の単位は？**  
+A: このデータの `v:temp` は**摂氏（℃）で格納済み**です。ケルビン変換は不要です。
 
 ---
 
