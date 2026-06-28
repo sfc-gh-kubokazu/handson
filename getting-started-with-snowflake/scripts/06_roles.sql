@@ -23,8 +23,12 @@ CREATE OR REPLACE ROLE junior_dba;
 
 GRANT ROLE junior_dba TO USER YOUR_USERNAME_GOES_HERE;
 
--- ユーザー名がわからない場合はこちらを使用:
--- GRANT ROLE junior_dba TO USER (SELECT CURRENT_USER());
+-- ユーザー名がわからない場合は、こちらの匿名ブロックで動的に付与できます
+-- （GRANT は副問い合わせを直接受け付けないため EXECUTE IMMEDIATE を使います）
+BEGIN
+    LET stmt := 'GRANT ROLE junior_dba TO USER ' || CURRENT_USER();
+    EXECUTE IMMEDIATE stmt;
+END;
 
 -- =============================================================
 -- 2. ロールを切り替えて権限を確認
