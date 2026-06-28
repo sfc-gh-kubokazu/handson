@@ -9,12 +9,14 @@
 USE ROLE accountadmin;
 
 -- 共有（データシェア）を削除
--- ⚠️ 共有名が異なる場合は変更してください
-DROP SHARE IF EXISTS zero_to_snowflake_shared_data;
+-- プロバイダー側で作成した共有
+DROP SHARE IF EXISTS citibike_share;
 
 -- データベースを削除
 DROP DATABASE IF EXISTS citibike;
 DROP DATABASE IF EXISTS weather;
+-- 隣の人から共有されて作成したデータベース（コンシューマー側）
+DROP DATABASE IF EXISTS citibike_from_neighbor;
 
 -- ウェアハウスを削除
 DROP WAREHOUSE IF EXISTS analytics_wh;
