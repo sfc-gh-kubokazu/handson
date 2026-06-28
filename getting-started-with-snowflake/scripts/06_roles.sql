@@ -19,7 +19,7 @@ USE ROLE accountadmin;
 -- ⚠️ YOUR_USERNAME_GOES_HERE を実際のユーザー名に変更してください
 --   例: GRANT ROLE junior_dba TO USER TARO_YAMADA;
 --   自分のユーザー名が不明な場合: SELECT CURRENT_USER();
-CREATE ROLE junior_dba;
+CREATE OR REPLACE ROLE junior_dba;
 
 GRANT ROLE junior_dba TO USER YOUR_USERNAME_GOES_HERE;
 
