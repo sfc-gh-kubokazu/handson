@@ -1,0 +1,15 @@
+definition_version: "2"
+
+entities:
+  pmda_doc_search_app:
+    type: streamlit
+    identifier:
+      name: PMDA_DOC_SEARCH_APP
+      schema: HANDSON
+      database: DOC_SEARCH_HANDSON
+    stage: DOC_SEARCH_HANDSON.HANDSON.STREAMLIT
+    query_warehouse: COMPUTE_WH
+    main_file: streamlit_app.py
+    artifacts:
+      - streamlit_app.py
+      - environment.yml

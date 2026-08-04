@@ -21,6 +21,17 @@ handson/
 │   ├── 04_advanced/                  # 発展課題
 │   ├── prompts/                      # CoCo Web UI用プロンプト集
 │   └── assets/                       # 画像・図解
+├── coco-in-snowsight-handson/        # Cortex Code in Snowsight（数値データ編）
+│   ├── README.md
+│   ├── agenda.md
+│   ├── scenario.md                   # 全体像・シナリオ
+│   ├── steps/                        # 手順書（step1〜5）
+│   └── scripts/                      # SQL / セマンティックビュー / スキル / Streamlit
+├── cortex-doc-search-handson/        # Cortex Doc Search（文書編・上記の続編）
+│   ├── README.md
+│   ├── agenda.md
+│   ├── steps/                        # 手順書（step0〜6）
+│   └── scripts/                      # SQL / Streamlit / スキル
 └── （今後追加予定）
     ├── streamlit-cortex/             # Streamlit × Cortex
     ├── snowpark-ml/                  # Snowpark ML
@@ -33,6 +44,8 @@ handson/
 |---|---|---|---|
 | `getting-started-with-snowflake/` | Snowflake 入門: データロード・アナリティクス・タイムトラベル・ロール管理 | Snowflake 初心者 | 完成 |
 | `cortex-agent-mcp/` | Cortex Agent作成 + Kiro/Claude DesktopからのMCP接続 | データエンジニア・開発者 | 作成中 |
+| `coco-in-snowsight-handson/` | Cortex Code in Snowsight でセマンティックビュー・エージェント・スキル・Streamlitを作る（数値データ編） | 業務部門・データ活用担当 | 完成 |
+| `cortex-doc-search-handson/` | AI_PARSE_DOCUMENT → Cortex Search → Agent → Streamlit → スキル。文書検索とAI関数での名寄せ（文書編） | 業務部門・データ活用担当 | 完成 |
 
 ## このリポジトリの方針
 
