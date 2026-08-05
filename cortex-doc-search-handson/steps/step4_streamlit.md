@@ -75,23 +75,45 @@ snow streamlit deploy --replace
 
 ## コードの読みどころ
 
-### ★0. 依存パッケージをゼロにしている
+### ★0. 依存パッケージを最小にしている
 
 ```toml
 [project]
 name = "pmda-doc-search-app"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "streamlit[snowflake]"
+]
 ```
 
-コンテナランタイムは**既定ではPyPIにアクセスできません**。
-パッケージを追加するにも、`streamlit` のようなプリインストール済みパッケージの
-バージョンを固定するにも、External Access Integration (EAI) が必要です。
+ここは3点セットで理解してください。
 
-このアプリはプリインストール済みの Python / Streamlit / Snowpark だけで動くように
-書いてあるので、EAIなしで動きます。
-（そのために、選択肢の取得で `to_pandas()` を使わず `collect()` にしています）
+**(1) `streamlit` の宣言は省略できない**
+
+プリインストール済みなので書かなくてよさそうに見えますが、`dependencies = []` にすると
+uv が作る環境に Streamlit が入らず、次のエラーで起動できません。
+
+```
+Failed to get the version of the Streamlit library.
+Please check if the Streamlit library is installed and fulfills
+the following version constraints: ">=1.48.0".
+```
+
+**(2) バージョンは指定しない**
+
+コンテナランタイムは既定では PyPI にアクセスできません。
+バージョン指定を書くと、条件を満たすために PyPI を見にいこうとするため
+External Access Integration (EAI) が必要になります。
+指定しなければランタイム同梱のものがそのまま使われます。
+
+**(3) `[snowflake]` を付ける**
+
+`snowflake-snowpark-python` が一緒に入ります。`st.connection("snowflake")` がこれを使います。
+
+`pandas` や `plotly` を追加したくなったら EAI が必要です。
+このアプリは追加パッケージ無しで動くように書いてあります
+（選択肢の取得で `to_pandas()` を使わず `collect()` にしているのはそのためです）。
 
 ### ★1. `get_active_session()` を使わない
 
@@ -178,6 +200,7 @@ RAGと呼ばれているものの中身はこれだけです。
 | 症状 | 原因 | 対処 |
 |---|---|---|
 | `Installing dependencies failed because the pyproject.toml file does not exist. Please create it.` | コンテナランタイムなのに依存関係ファイルが無い | `pyproject.toml` を `streamlit_app.py` と同じ場所に置く |
+| `Failed to get the version of the Streamlit library.` | `dependencies` が空で Streamlit が入っていない | `streamlit[snowflake]` を宣言する（バージョン指定は付けない） |
 | `environment.yml` を置いたのに無視される | コンテナランタイムは conda を使わない | `pyproject.toml` に書き換える |
 | パッケージのインストールに失敗する | EAI が無いのに PyPI から取ろうとしている | パッケージを増やさない、または EAI を割り当てる |
 | 閲覧者が増えると挙動がおかしい | `get_active_session()` を使っている | `st.connection("snowflake").session()` にする |
