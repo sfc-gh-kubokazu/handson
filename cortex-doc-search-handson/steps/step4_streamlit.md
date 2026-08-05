@@ -34,28 +34,76 @@
 
 ## デプロイ
 
-### Snowsight の画面から作る場合
+### ★先に知っておくこと: ランタイムが2種類ある
 
-1. **Projects » Streamlit** を開く
-2. **+ Streamlit App**
-3. データベース `DOC_SEARCH_HANDSON` / スキーマ `HANDSON` / ウェアハウス `COMPUTE_WH`
+Streamlit in Snowflake には実行環境が2種類あり、**依存関係の書き方とコードの書き方が変わります**。
+
+| | コンテナランタイム | ウェアハウスランタイム |
+|---|---|---|
+| 実行基盤 | コンピュートプール | ウェアハウス |
+| パッケージ管理 | `uv` | `conda` |
+| 依存関係ファイル | **`pyproject.toml`** または `requirements.txt` | `environment.yml` |
+| パッケージの入手元 | PyPI（**EAIが必要**） | Snowflake Anaconda Channel |
+| セッション取得 | **`st.connection("snowflake").session()`** | `get_active_session()` でも可 |
+
+**ワークスペースから作る場合はコンテナランタイム専用です。**
+ウェアハウスランタイムは選べません。この手順書はコンテナランタイム前提で書いています。
+
+### ワークスペースから作る（推奨）
+
+1. ワークスペースを開く
+2. **+ Add new » Streamlit app**
+3. 次の4ファイルが自動生成される
+   ```
+   streamlit_app.py       # アプリ本体
+   pyproject.toml         # 依存パッケージ
+   snowflake.yml          # デプロイ設定
+   .streamlit/config.toml # Streamlit設定
+   ```
 4. `scripts/step4_streamlit/streamlit_app.py` の中身を貼り付ける
-5. Packages に `pandas` を追加
-6. Run
+5. `pyproject.toml` を `scripts/step4_streamlit/pyproject.toml` の内容にする
+6. **Run** で自分だけが見えるプレビューを起動
+7. 他のユーザーに公開するなら **Deploy**
 
 ### CLIから作る場合
 
 ```bash
 cd scripts/step4_streamlit
+# snowflake.yml の compute_pool を自分の環境の値に書き換えてから
 snow streamlit deploy --replace
 ```
 
-`snowflake.yml` にデプロイ先が書いてあります。
-`DOC_SEARCH_HANDSON.HANDSON.STREAMLIT` ステージは手順0で作成済みです。
-
 ## コードの読みどころ
 
-### ★1. `SEARCH_PREVIEW` は定数しか受け取らない
+### ★0. 依存パッケージをゼロにしている
+
+```toml
+[project]
+name = "pmda-doc-search-app"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = []
+```
+
+コンテナランタイムは**既定ではPyPIにアクセスできません**。
+パッケージを追加するにも、`streamlit` のようなプリインストール済みパッケージの
+バージョンを固定するにも、External Access Integration (EAI) が必要です。
+
+このアプリはプリインストール済みの Python / Streamlit / Snowpark だけで動くように
+書いてあるので、EAIなしで動きます。
+（そのために、選択肢の取得で `to_pandas()` を使わず `collect()` にしています）
+
+### ★1. `get_active_session()` を使わない
+
+```python
+session = st.connection("snowflake").session()
+```
+
+コンテナランタイムでは、1つのStreamlitサーバが複数の閲覧者を同時に処理します。
+`get_active_session()` はスレッドセーフでないため、公式に
+`st.connection("snowflake")` を使うよう案内されています。
+
+### ★2. `SEARCH_PREVIEW` は定数しか受け取らない
 
 ```python
 def sql_literal(text: str) -> str:
@@ -129,9 +177,12 @@ RAGと呼ばれているものの中身はこれだけです。
 
 | 症状 | 原因 | 対処 |
 |---|---|---|
+| `Installing dependencies failed because the pyproject.toml file does not exist. Please create it.` | コンテナランタイムなのに依存関係ファイルが無い | `pyproject.toml` を `streamlit_app.py` と同じ場所に置く |
+| `environment.yml` を置いたのに無視される | コンテナランタイムは conda を使わない | `pyproject.toml` に書き換える |
+| パッケージのインストールに失敗する | EAI が無いのに PyPI から取ろうとしている | パッケージを増やさない、または EAI を割り当てる |
+| 閲覧者が増えると挙動がおかしい | `get_active_session()` を使っている | `st.connection("snowflake").session()` にする |
 | `needs to be constant` | 検索条件をバインドしている | リテラルを組み立てる |
 | 結果が0件 | `filter` の値が完全一致でない | サイドバーの値はDBから取得している |
-| `pandas` が無い | Packages に追加していない | 追加して再起動 |
 | 権限エラー | 検索サービスに `USAGE` が無い | 付与する |
 
 ---

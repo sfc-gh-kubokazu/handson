@@ -1,5 +1,12 @@
 definition_version: "2"
 
+# ★ ワークスペースから作る場合、このファイルは Snowflake が自動生成します。
+#   これは snow CLI でデプロイする場合の設定例です。
+#
+#   compute_pool と runtime_name があるのでコンテナランタイムです。
+#   ワークスペースのStreamlitはコンテナランタイム専用のため、
+#   ウェアハウスランタイム（environment.yml / conda）は使えません。
+#   compute_pool は自分の環境の値に置き換えてください。
 entities:
   pmda_doc_search_app:
     type: streamlit
@@ -7,9 +14,10 @@ entities:
       name: PMDA_DOC_SEARCH_APP
       schema: HANDSON
       database: DOC_SEARCH_HANDSON
-    stage: DOC_SEARCH_HANDSON.HANDSON.STREAMLIT
     query_warehouse: COMPUTE_WH
+    compute_pool: <自分のコンピュートプール名>
+    runtime_name: SYSTEM$ST_CONTAINER_RUNTIME_PY3_11
     main_file: streamlit_app.py
     artifacts:
       - streamlit_app.py
-      - environment.yml
+      - pyproject.toml

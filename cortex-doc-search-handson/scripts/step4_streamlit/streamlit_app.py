@@ -1,7 +1,6 @@
 import json
 
 import streamlit as st
-from snowflake.snowpark.context import get_active_session
 
 st.set_page_config(
     page_title="医薬品文書検索",
@@ -12,7 +11,12 @@ st.set_page_config(
 DB_SCHEMA = "DOC_SEARCH_HANDSON.HANDSON"
 SEARCH_SERVICE = f"{DB_SCHEMA}.PMDA_DOC_SEARCH"
 
-session = get_active_session()
+# ★ get_active_session() ではなく st.connection を使う理由
+#   コンテナランタイム（ワークスペースから作るとこちらになります）では、
+#   1つの Streamlit サーバが複数の閲覧者を同時に処理します。
+#   get_active_session() はスレッドセーフでないため、
+#   公式に st.connection("snowflake") を使うよう案内されています。
+session = st.connection("snowflake").session()
 
 
 # ── ユーティリティ ───────────────────────────────────────────────────
@@ -33,15 +37,14 @@ def sql_literal(text: str) -> str:
 
 @st.cache_data(ttl=300, show_spinner=False)
 def get_filter_options():
-    df = session.sql(f"""
+    # 追加パッケージを不要にするため to_pandas() は使わない
+    rows = session.sql(f"""
         SELECT DISTINCT doc_type, product_name, drug_class
         FROM {DB_SCHEMA}.DOC_CHUNK
-    """).to_pandas()
-    return (
-        sorted(df["DOC_TYPE"].dropna().unique().tolist()),
-        sorted(df["PRODUCT_NAME"].dropna().unique().tolist()),
-        sorted(df["DRUG_CLASS"].dropna().unique().tolist()),
-    )
+    """).collect()
+    def uniq(col):
+        return sorted({r[col] for r in rows if r[col] is not None})
+    return uniq("DOC_TYPE"), uniq("PRODUCT_NAME"), uniq("DRUG_CLASS")
 
 
 def search(query: str, filters: list, limit: int):

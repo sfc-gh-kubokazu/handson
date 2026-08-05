@@ -1,0 +1,17 @@
+[project]
+name = "pmda-doc-search-app"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+# ★ 依存パッケージは意図的に空にしています。
+#
+#   コンテナランタイムは既定では PyPI にアクセスできません。
+#   パッケージを追加したり、バージョンを固定したりする場合は
+#   External Access Integration (EAI) が必要になります。
+#   （streamlit のようなプリインストール済みパッケージでも、
+#     バージョン指定を書くと EAI が必要です）
+#
+#   このアプリはプリインストール済みの
+#   Python / Streamlit / Snowpark だけで動くように作ってあるため、
+#   EAI なしで動きます。
+dependencies = []
