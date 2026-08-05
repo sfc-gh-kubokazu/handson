@@ -3,6 +3,18 @@
 **所要時間**: 10分
 **ファイル**: `scripts/step4_streamlit/streamlit_app.py`
 
+## 今回使うもの
+
+| 名前 | これは何か |
+|---|---|
+| **Streamlit in Snowflake (SiS)** | Snowflake の中で Streamlit アプリを動かす仕組み。Pythonだけで画面を作れて、別のサーバを立てる必要がなく、データを外に出さずにURLで同僚に配れる |
+| **コンテナランタイム** | コンピュートプール上でアプリを動かす実行環境。パッケージは `uv` が管理する。**ワークスペースから作るとこちらになる** |
+| **ウェアハウスランタイム** | ウェアハウス上でアプリを動かす実行環境。パッケージは `conda` が管理する |
+| **`st.connection("snowflake")`** | Streamlit が管理する Snowflake 接続。`.session()` で Snowpark セッション、`.query()` でキャッシュ付きのクエリが使える |
+| **`AI_COMPLETE`** | 指定したLLMにプロンプトを渡して生成させる Cortex AI 関数。`response_format` を付けるとJSONスキーマに従った出力にできる |
+| **`st.cache_data`** | 関数の戻り値をキャッシュするデコレータ。コンテナランタイムは閲覧者間でリソースを共有するため、重い処理はキャッシュすることが推奨されている |
+| **EAI**（External Access Integration） | Snowflake から外部ネットワークへの通信を許可する設定。コンテナランタイムで PyPI からパッケージを入れるときに必要 |
+
 ## ゴール
 
 エージェントのプレイグラウンドではなく、

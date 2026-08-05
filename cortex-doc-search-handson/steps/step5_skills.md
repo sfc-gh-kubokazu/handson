@@ -3,6 +3,16 @@
 **所要時間**: 10分
 **ファイル**: `scripts/step5_skills/pmda-doc-search/`
 
+## 今回使うもの
+
+| 名前 | これは何か |
+|---|---|
+| **CoCo**（Cortex Code） | Snowflake のAIコーディングアシスタント。Snowsight のワークスペースの中から、自然文で調査・SQL実行・オブジェクト作成ができる |
+| **Personal Skills** | CoCo に「手順」を覚えさせる Markdown ファイル。ワークスペース配下の `.snowflake/cortex/skills/<名前>/SKILL.md` に置く。プロンプトを毎回書く代わりに、1回書いて置いておく |
+| **`description` のトリガー語** | スキルの冒頭に書くキーワード。CoCo がこれを見て、関係する質問のときに自動でスキルを読み込む |
+| **`references/`** | スキルが参照する補助ファイルの置き場。SQLクエリ集やテンプレートを分けて置く |
+| **`/skills`** | 認識されているスキルの一覧を表示するコマンド |
+
 ## ゴール
 
 ここまでで作った検索を、**CoCo（Cortex Code）から自然文で呼べる**ようにします。
