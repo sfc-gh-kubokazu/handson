@@ -42,7 +42,7 @@ Streamlit in Snowflake には実行環境が2種類あり、**依存関係の書
 |---|---|---|
 | 実行基盤 | コンピュートプール | ウェアハウス |
 | パッケージ管理 | `uv` | `conda` |
-| 依存関係ファイル | **`pyproject.toml`** または `requirements.txt` | `environment.yml` |
+| 依存関係ファイル | **`requirements.txt`** または `pyproject.toml` | `environment.yml` |
 | パッケージの入手元 | PyPI（**EAIが必要**） | Snowflake Anaconda Channel |
 | セッション取得 | **`st.connection("snowflake").session()`** | `get_active_session()` でも可 |
 
@@ -61,7 +61,8 @@ Streamlit in Snowflake には実行環境が2種類あり、**依存関係の書
    .streamlit/config.toml # Streamlit設定
    ```
 4. `scripts/step4_streamlit/streamlit_app.py` の中身を貼り付ける
-5. `pyproject.toml` を `scripts/step4_streamlit/pyproject.toml` の内容にする
+5. **+ (Add) » Create new file** で `requirements.txt` を作り、`streamlit` の1行を書く
+   （生成された `pyproject.toml` は消さなくてよい。`requirements.txt` が優先されます）
 6. **Run** で自分だけが見えるプレビューを起動
 7. 他のユーザーに公開するなら **Deploy**
 
@@ -75,45 +76,45 @@ snow streamlit deploy --replace
 
 ## コードの読みどころ
 
-### ★0. 依存パッケージを最小にしている
+### ★0. 依存パッケージは `streamlit` だけ
 
-```toml
-[project]
-name = "pmda-doc-search-app"
-version = "0.1.0"
-requires-python = ">=3.11"
-dependencies = [
-    "streamlit[snowflake]"
-]
-```
-
-ここは3点セットで理解してください。
-
-**(1) `streamlit` の宣言は省略できない**
-
-プリインストール済みなので書かなくてよさそうに見えますが、`dependencies = []` にすると
-uv が作る環境に Streamlit が入らず、次のエラーで起動できません。
+`requirements.txt`（1行）:
 
 ```
-Failed to get the version of the Streamlit library.
-Please check if the Streamlit library is installed and fulfills
-the following version constraints: ">=1.48.0".
+streamlit
 ```
 
-**(2) バージョンは指定しない**
+公式ドキュメントの2つのサンプルで、扱いがはっきり分かれています。
 
-コンテナランタイムは既定では PyPI にアクセスできません。
-バージョン指定を書くと、条件を満たすために PyPI を見にいこうとするため
-External Access Integration (EAI) が必要になります。
-指定しなければランタイム同梱のものがそのまま使われます。
+| サンプル | 追加パッケージ | 依存関係ファイル |
+|---|---|---|
+| Build a form that writes to Snowflake | なし | **不要**（`artifacts` は `streamlit_app.py` のみ） |
+| Build a personalized data dashboard | plotly | `requirements.txt` に `plotly` と `streamlit` |
 
-**(3) `[snowflake]` を付ける**
+> This app only uses `streamlit` and the built-in Snowflake connection,
+> so **no additional dependencies are required.**
+> — Build a form that writes to Snowflake
 
-`snowflake-snowpark-python` が一緒に入ります。`st.connection("snowflake")` がこれを使います。
+このアプリも `streamlit` と組み込みのSnowflake接続しか使わないので、
+本来は依存関係ファイルが無くても動きます。
+ここで `requirements.txt` を1行だけ置いているのは、
+**ファイルの有無で迷わないようにするため**です。
 
-`pandas` や `plotly` を追加したくなったら EAI が必要です。
-このアプリは追加パッケージ無しで動くように書いてあります
-（選択肢の取得で `to_pandas()` を使わず `collect()` にしているのはそのためです）。
+3点だけ押さえてください。
+
+1. **`dependencies = []` のような「空のファイル」を作らない。**
+   uv が作る環境に Streamlit が入らず、
+   `Failed to get the version of the Streamlit library.` で起動できません。
+   「ファイルを置かない」か「`streamlit` を書く」のどちらかです
+2. **バージョンは指定しない。** コンテナランタイムは既定でPyPIにアクセスできません。
+   バージョン指定を書くと External Access Integration (EAI) が必要になります
+3. **`requirements.txt` は `pyproject.toml` より優先されます。**
+   ワークスペースが生成した `pyproject.toml` が残っていても、
+   `requirements.txt` があればそちらが使われます
+
+`pandas` や `plotly` を足したくなったら EAI が必要です。
+このアプリが追加パッケージ無しで済むように、選択肢の取得で
+`to_pandas()` ではなく `collect()` を使っています。
 
 ### ★1. `get_active_session()` を使わない
 
@@ -199,9 +200,9 @@ RAGと呼ばれているものの中身はこれだけです。
 
 | 症状 | 原因 | 対処 |
 |---|---|---|
-| `Installing dependencies failed because the pyproject.toml file does not exist. Please create it.` | コンテナランタイムなのに依存関係ファイルが無い | `pyproject.toml` を `streamlit_app.py` と同じ場所に置く |
-| `Failed to get the version of the Streamlit library.` | `dependencies` が空で Streamlit が入っていない | `streamlit[snowflake]` を宣言する（バージョン指定は付けない） |
-| `environment.yml` を置いたのに無視される | コンテナランタイムは conda を使わない | `pyproject.toml` に書き換える |
+| `Installing dependencies failed because the pyproject.toml file does not exist. Please create it.` | コンテナランタイムなのに依存関係ファイルが無い | `requirements.txt` に `streamlit` の1行を置く |
+| `Failed to get the version of the Streamlit library.` | 依存関係ファイルはあるが Streamlit が宣言されていない | `streamlit` を書く（バージョン指定は付けない） |
+| `environment.yml` を置いたのに無視される | コンテナランタイムは conda を使わない | `requirements.txt` に書き換える |
 | パッケージのインストールに失敗する | EAI が無いのに PyPI から取ろうとしている | パッケージを増やさない、または EAI を割り当てる |
 | 閲覧者が増えると挙動がおかしい | `get_active_session()` を使っている | `st.connection("snowflake").session()` にする |
 | `needs to be constant` | 検索条件をバインドしている | リテラルを組み立てる |
